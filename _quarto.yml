@@ -1,0 +1,45 @@
+project:
+  type: website
+  output-dir: docs  # pour Github pages
+
+website:
+  title: "Projet Machine Learning" 
+  navbar:
+    background: "#0f2942"
+    left:
+      - href: index.qmd
+        text: Accueil
+      - href: Part1.qmd
+        text: Partie 1
+      - href: Part2.qmd
+        text: Partie 2
+      - href: Part3.qmd
+        text: Partie 3
+      - href: Part4.qmd
+        text: Partie 4 
+        
+    right:
+      - icon: github
+        href: https://github.com/ndhviet/Machine_Learning_Deep_Learning
+      - text: "Portfolio de Viet"
+        href: https://ndhviet.github.io/
+        aria-label: "Portfolio"
+      - icon: linkedin           
+        href: https://www.linkedin.com/in/hoang-viet1810/?isSelfProfile=false
+        aria-label: "LinkedIn"
+      
+
+format:
+  html:
+    theme: flatly
+    css: custom.css
+    include-after-body: [loading.html, footer.html]
+    toc: true
+    toc-location: right
+    toc-title: "Sur cette page" 
+    code-fold: true
+    embed-resources: false
+    #include-after-body: footer.html
+    
+    
+    

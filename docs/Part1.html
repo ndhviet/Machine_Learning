@@ -1,0 +1,2841 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.38">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="NGUYEN Duc Hoang Viet">
+
+<title>Partie 1 Housing Prices – Projet Machine Learning</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-d5d12a2c1b219e8f9ae2db285f6b22c7.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="custom.css">
+</head>
+
+<body class="nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">Projet Machine Learning</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="./index.html"> 
+<span class="menu-text">Accueil</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link active" href="./Part1.html" aria-current="page"> 
+<span class="menu-text">Partie 1</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./Part2.html"> 
+<span class="menu-text">Partie 2</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./Part3.qmd"> 
+<span class="menu-text">Partie 3</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./Part4.qmd"> 
+<span class="menu-text">Partie 4</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/ndhviet/Machine_Learning_Deep_Learning"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="https://ndhviet.github.io/"> 
+<span class="menu-text">Portfolio de Viet</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com/in/hoang-viet1810/?isSelfProfile=false"> <i class="bi bi-linkedin" role="img" aria-label="LinkedIn">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Sur cette page</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction"><span class="header-section-number">1</span> Introduction</a></li>
+  <li><a href="#import-les-modules" id="toc-import-les-modules" class="nav-link" data-scroll-target="#import-les-modules"><span class="header-section-number">2</span> Import les modules</a></li>
+  <li><a href="#fonction-create_training_data" id="toc-fonction-create_training_data" class="nav-link" data-scroll-target="#fonction-create_training_data"><span class="header-section-number">3</span> Fonction create_training_data</a></li>
+  <li><a href="#fonction-define_and_compile_model" id="toc-fonction-define_and_compile_model" class="nav-link" data-scroll-target="#fonction-define_and_compile_model"><span class="header-section-number">4</span> Fonction define_and_compile_model</a></li>
+  <li><a href="#fonction-train_model" id="toc-fonction-train_model" class="nav-link" data-scroll-target="#fonction-train_model"><span class="header-section-number">5</span> Fonction train_model</a></li>
+  <li><a href="#resultats" id="toc-resultats" class="nav-link" data-scroll-target="#resultats"><span class="header-section-number">6</span> Resultats</a>
+  <ul class="collapse">
+  <li><a href="#relation-lineaire" id="toc-relation-lineaire" class="nav-link" data-scroll-target="#relation-lineaire"><span class="header-section-number">6.1</span> Relation lineaire</a></li>
+  <li><a href="#explication" id="toc-explication" class="nav-link" data-scroll-target="#explication"><span class="header-section-number">6.2</span> Explication</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Partie 1 Housing Prices</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>NGUYEN Duc Hoang Viet </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="introduction" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> Introduction</h1>
+<p>Dans cette partie, nous allons prédire le prix des maisons selon le scénario suivant : une maison avec 1 chambre coûte 100k (100 000 USD), et le prix augmente de 50k pour chaque chambre supplémentaire.</p>
+<p>Pour créer les données d’entraînement (features et targets), nous allons utiliser numpy afin de créer un tenseur à une dimension contenant le nombre de chambres, ainsi qu’un autre tenseur à une dimension contenant le prix correspondant (exprimé en centaines de milliers de dollars, par exemple 1.0 signifie 100k). Dans ce cas, le nombre de chambres sera les features, que le réseau de neurones essaiera d’associer au target, à savoir le prix des maisons.</p>
+<p>Ces deux tenseurs (ou tableaux numpy) auront 6 éléments, correspondant aux valeurs (nombre de chambres et prix en centaines de milliers de dollars) pour des maisons ayant de 1 à 6 chambres.</p>
+<p><span class="math display">\[
+\text{prix} = a \times (\text{nombre de chambres}) + b
+\]</span></p>
+</section>
+<section id="import-les-modules" class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> Import les modules</h1>
+<div id="4f64dfb9" class="cell" data-execution_count="1">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> tensorflow <span class="im">as</span> tf</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="fonction-create_training_data" class="level1" data-number="3">
+<h1 data-number="3"><span class="header-section-number">3</span> Fonction create_training_data</h1>
+<div id="af1395e2" class="cell" data-execution_count="2">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> create_training_data():</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    n_bedrooms <span class="op">=</span> np.array([<span class="fl">1.0</span>, <span class="fl">2.0</span>, <span class="fl">3.0</span>, <span class="fl">4.0</span>, <span class="fl">5.0</span>, <span class="fl">6.0</span>] ,dtype<span class="op">=</span> <span class="bu">float</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    price_in_hundreds_of_thousands <span class="op">=</span> np.array([<span class="fl">1.0</span>, <span class="fl">1.5</span>, <span class="fl">2.0</span>, <span class="fl">2.5</span>, <span class="fl">3.0</span>, <span class="fl">3.5</span>], dtype<span class="op">=</span><span class="bu">float</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> n_bedrooms, price_in_hundreds_of_thousands</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="cef045e1" class="cell" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>features, targets <span class="op">=</span> create_training_data()</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Features have shape: </span><span class="sc">{</span>features<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Targets have shape: </span><span class="sc">{</span>targets<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Features have shape: (6,)
+Targets have shape: (6,)</code></pre>
+</div>
+</div>
+</section>
+<section id="fonction-define_and_compile_model" class="level1" data-number="4">
+<h1 data-number="4"><span class="header-section-number">4</span> Fonction define_and_compile_model</h1>
+<div id="9dfd9bc0" class="cell" data-execution_count="4">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> define_and_compile_model():</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    model <span class="op">=</span> tf.keras.Sequential([</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>           tf.keras.Input(shape<span class="op">=</span>[<span class="dv">1</span>]),</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>         tf.keras.layers.Dense(units<span class="op">=</span><span class="dv">1</span>)])</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    model.<span class="bu">compile</span>(optimizer<span class="op">=</span><span class="st">'sgd'</span>, loss<span class="op">=</span><span class="st">'mean_squared_error'</span>)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> model</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="d90010be" class="cell" data-execution_count="5">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>untrained_model <span class="op">=</span> define_and_compile_model()</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>untrained_model.summary()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Model: "sequential"
+_________________________________________________________________
+ Layer (type)                Output Shape              Param #   
+=================================================================
+ dense (Dense)               (None, 1)                 2         
+                                                                 
+=================================================================
+Total params: 2 (8.00 Byte)
+Trainable params: 2 (8.00 Byte)
+Non-trainable params: 0 (0.00 Byte)
+_________________________________________________________________</code></pre>
+</div>
+</div>
+</section>
+<section id="fonction-train_model" class="level1" data-number="5">
+<h1 data-number="5"><span class="header-section-number">5</span> Fonction train_model</h1>
+<div id="46f44964" class="cell" data-execution_count="6">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> train_model():</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Define feature and target tensors with the values for houses with 1 up to 6 bedrooms</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    n_bedrooms , price_in_hundreds_of_thousands <span class="op">=</span> create_training_data()</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Define a compiled (but untrained) model</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    model <span class="op">=</span> define_and_compile_model()</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Train the model for 500 epochs by feeding the training data</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    model.fit(n_bedrooms, price_in_hundreds_of_thousands, epochs <span class="op">=</span><span class="dv">500</span> )</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> model</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="7669f3f6" class="cell" data-execution_count="7">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Trained model</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>trained_model <span class="op">=</span> train_model()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Epoch 1/500
+
+1/1 [==============================] - ETA: 0s - loss: 2.4846
+1/1 [==============================] - 0s 283ms/step - loss: 2.4846
+Epoch 2/500
+
+1/1 [==============================] - ETA: 0s - loss: 1.1672
+1/1 [==============================] - 0s 3ms/step - loss: 1.1672
+Epoch 3/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.5573
+1/1 [==============================] - 0s 4ms/step - loss: 0.5573
+Epoch 4/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.2749
+1/1 [==============================] - 0s 3ms/step - loss: 0.2749
+Epoch 5/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.1441
+1/1 [==============================] - 0s 3ms/step - loss: 0.1441
+Epoch 6/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0834
+1/1 [==============================] - 0s 3ms/step - loss: 0.0834
+Epoch 7/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0552
+1/1 [==============================] - 0s 3ms/step - loss: 0.0552
+Epoch 8/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0420
+1/1 [==============================] - 0s 3ms/step - loss: 0.0420
+Epoch 9/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0358
+1/1 [==============================] - 0s 3ms/step - loss: 0.0358
+Epoch 10/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0328
+1/1 [==============================] - 0s 3ms/step - loss: 0.0328
+Epoch 11/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0313
+1/1 [==============================] - 0s 4ms/step - loss: 0.0313
+Epoch 12/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0305
+1/1 [==============================] - 0s 3ms/step - loss: 0.0305
+Epoch 13/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0300
+1/1 [==============================] - 0s 3ms/step - loss: 0.0300
+Epoch 14/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0297
+1/1 [==============================] - 0s 3ms/step - loss: 0.0297
+Epoch 15/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0294
+1/1 [==============================] - 0s 2ms/step - loss: 0.0294
+Epoch 16/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0291
+1/1 [==============================] - 0s 3ms/step - loss: 0.0291
+Epoch 17/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0289
+1/1 [==============================] - 0s 3ms/step - loss: 0.0289
+Epoch 18/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0287
+1/1 [==============================] - 0s 3ms/step - loss: 0.0287
+Epoch 19/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0285
+1/1 [==============================] - 0s 2ms/step - loss: 0.0285
+Epoch 20/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0283
+1/1 [==============================] - 0s 3ms/step - loss: 0.0283
+Epoch 21/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0281
+1/1 [==============================] - 0s 3ms/step - loss: 0.0281
+Epoch 22/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0279
+1/1 [==============================] - 0s 3ms/step - loss: 0.0279
+Epoch 23/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0277
+1/1 [==============================] - 0s 2ms/step - loss: 0.0277
+Epoch 24/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0275
+1/1 [==============================] - 0s 3ms/step - loss: 0.0275
+Epoch 25/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0273
+1/1 [==============================] - 0s 3ms/step - loss: 0.0273
+Epoch 26/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0271
+1/1 [==============================] - 0s 3ms/step - loss: 0.0271
+Epoch 27/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0269
+1/1 [==============================] - 0s 2ms/step - loss: 0.0269
+Epoch 28/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0267
+1/1 [==============================] - 0s 2ms/step - loss: 0.0267
+Epoch 29/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0265
+1/1 [==============================] - 0s 3ms/step - loss: 0.0265
+Epoch 30/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0263
+1/1 [==============================] - 0s 3ms/step - loss: 0.0263
+Epoch 31/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0261
+1/1 [==============================] - 0s 3ms/step - loss: 0.0261
+Epoch 32/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0259
+1/1 [==============================] - 0s 2ms/step - loss: 0.0259
+Epoch 33/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0257
+1/1 [==============================] - 0s 2ms/step - loss: 0.0257
+Epoch 34/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0255
+1/1 [==============================] - 0s 3ms/step - loss: 0.0255
+Epoch 35/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0253
+1/1 [==============================] - 0s 3ms/step - loss: 0.0253
+Epoch 36/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0252
+1/1 [==============================] - 0s 3ms/step - loss: 0.0252
+Epoch 37/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0250
+1/1 [==============================] - 0s 3ms/step - loss: 0.0250
+Epoch 38/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0248
+1/1 [==============================] - 0s 2ms/step - loss: 0.0248
+Epoch 39/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0246
+1/1 [==============================] - 0s 3ms/step - loss: 0.0246
+Epoch 40/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0244
+1/1 [==============================] - 0s 3ms/step - loss: 0.0244
+Epoch 41/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0243
+1/1 [==============================] - 0s 3ms/step - loss: 0.0243
+Epoch 42/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0241
+1/1 [==============================] - 0s 2ms/step - loss: 0.0241
+Epoch 43/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0239
+1/1 [==============================] - 0s 2ms/step - loss: 0.0239
+Epoch 44/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0237
+1/1 [==============================] - 0s 2ms/step - loss: 0.0237
+Epoch 45/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0236
+1/1 [==============================] - 0s 3ms/step - loss: 0.0236
+Epoch 46/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0234
+1/1 [==============================] - 0s 3ms/step - loss: 0.0234
+Epoch 47/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0232
+1/1 [==============================] - 0s 2ms/step - loss: 0.0232
+Epoch 48/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0230
+1/1 [==============================] - 0s 3ms/step - loss: 0.0230
+Epoch 49/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0229
+1/1 [==============================] - 0s 3ms/step - loss: 0.0229
+Epoch 50/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0227
+1/1 [==============================] - 0s 3ms/step - loss: 0.0227
+Epoch 51/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0225
+1/1 [==============================] - 0s 3ms/step - loss: 0.0225
+Epoch 52/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0224
+1/1 [==============================] - 0s 3ms/step - loss: 0.0224
+Epoch 53/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0222
+1/1 [==============================] - 0s 2ms/step - loss: 0.0222
+Epoch 54/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0221
+1/1 [==============================] - 0s 2ms/step - loss: 0.0221
+Epoch 55/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0219
+1/1 [==============================] - 0s 3ms/step - loss: 0.0219
+Epoch 56/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0217
+1/1 [==============================] - 0s 3ms/step - loss: 0.0217
+Epoch 57/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0216
+1/1 [==============================] - 0s 2ms/step - loss: 0.0216
+Epoch 58/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0214
+1/1 [==============================] - 0s 2ms/step - loss: 0.0214
+Epoch 59/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0213
+1/1 [==============================] - 0s 3ms/step - loss: 0.0213
+Epoch 60/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0211
+1/1 [==============================] - 0s 3ms/step - loss: 0.0211
+Epoch 61/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0210
+1/1 [==============================] - 0s 3ms/step - loss: 0.0210
+Epoch 62/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0208
+1/1 [==============================] - 0s 3ms/step - loss: 0.0208
+Epoch 63/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0206
+1/1 [==============================] - 0s 3ms/step - loss: 0.0206
+Epoch 64/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0205
+1/1 [==============================] - 0s 3ms/step - loss: 0.0205
+Epoch 65/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0203
+1/1 [==============================] - 0s 3ms/step - loss: 0.0203
+Epoch 66/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0202
+1/1 [==============================] - 0s 3ms/step - loss: 0.0202
+Epoch 67/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0201
+1/1 [==============================] - 0s 2ms/step - loss: 0.0201
+Epoch 68/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0199
+1/1 [==============================] - 0s 3ms/step - loss: 0.0199
+Epoch 69/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0198
+1/1 [==============================] - 0s 2ms/step - loss: 0.0198
+Epoch 70/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0196
+1/1 [==============================] - 0s 3ms/step - loss: 0.0196
+Epoch 71/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0195
+1/1 [==============================] - 0s 3ms/step - loss: 0.0195
+Epoch 72/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0193
+1/1 [==============================] - 0s 2ms/step - loss: 0.0193
+Epoch 73/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0192
+1/1 [==============================] - 0s 2ms/step - loss: 0.0192
+Epoch 74/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0191
+1/1 [==============================] - 0s 3ms/step - loss: 0.0191
+Epoch 75/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0189
+1/1 [==============================] - 0s 3ms/step - loss: 0.0189
+Epoch 76/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0188
+1/1 [==============================] - 0s 3ms/step - loss: 0.0188
+Epoch 77/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0186
+1/1 [==============================] - 0s 3ms/step - loss: 0.0186
+Epoch 78/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0185
+1/1 [==============================] - 0s 2ms/step - loss: 0.0185
+Epoch 79/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0184
+1/1 [==============================] - 0s 3ms/step - loss: 0.0184
+Epoch 80/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0182
+1/1 [==============================] - 0s 3ms/step - loss: 0.0182
+Epoch 81/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0181
+1/1 [==============================] - 0s 3ms/step - loss: 0.0181
+Epoch 82/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0180
+1/1 [==============================] - 0s 3ms/step - loss: 0.0180
+Epoch 83/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0178
+1/1 [==============================] - 0s 3ms/step - loss: 0.0178
+Epoch 84/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0177
+1/1 [==============================] - 0s 3ms/step - loss: 0.0177
+Epoch 85/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0176
+1/1 [==============================] - 0s 2ms/step - loss: 0.0176
+Epoch 86/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0175
+1/1 [==============================] - 0s 3ms/step - loss: 0.0175
+Epoch 87/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0173
+1/1 [==============================] - 0s 3ms/step - loss: 0.0173
+Epoch 88/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0172
+1/1 [==============================] - 0s 2ms/step - loss: 0.0172
+Epoch 89/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0171
+1/1 [==============================] - 0s 3ms/step - loss: 0.0171
+Epoch 90/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0169
+1/1 [==============================] - 0s 3ms/step - loss: 0.0169
+Epoch 91/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0168
+1/1 [==============================] - 0s 2ms/step - loss: 0.0168
+Epoch 92/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0167
+1/1 [==============================] - 0s 2ms/step - loss: 0.0167
+Epoch 93/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0166
+1/1 [==============================] - 0s 2ms/step - loss: 0.0166
+Epoch 94/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0165
+1/1 [==============================] - 0s 3ms/step - loss: 0.0165
+Epoch 95/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0163
+1/1 [==============================] - 0s 3ms/step - loss: 0.0163
+Epoch 96/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0162
+1/1 [==============================] - 0s 3ms/step - loss: 0.0162
+Epoch 97/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0161
+1/1 [==============================] - 0s 2ms/step - loss: 0.0161
+Epoch 98/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0160
+1/1 [==============================] - 0s 2ms/step - loss: 0.0160
+Epoch 99/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0159
+1/1 [==============================] - 0s 3ms/step - loss: 0.0159
+Epoch 100/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0158
+1/1 [==============================] - 0s 3ms/step - loss: 0.0158
+Epoch 101/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0156
+1/1 [==============================] - 0s 3ms/step - loss: 0.0156
+Epoch 102/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0155
+1/1 [==============================] - 0s 2ms/step - loss: 0.0155
+Epoch 103/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0154
+1/1 [==============================] - 0s 2ms/step - loss: 0.0154
+Epoch 104/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0153
+1/1 [==============================] - 0s 3ms/step - loss: 0.0153
+Epoch 105/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0152
+1/1 [==============================] - 0s 3ms/step - loss: 0.0152
+Epoch 106/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0151
+1/1 [==============================] - 0s 3ms/step - loss: 0.0151
+Epoch 107/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0150
+1/1 [==============================] - 0s 2ms/step - loss: 0.0150
+Epoch 108/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0149
+1/1 [==============================] - 0s 2ms/step - loss: 0.0149
+Epoch 109/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0147
+1/1 [==============================] - 0s 3ms/step - loss: 0.0147
+Epoch 110/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0146
+1/1 [==============================] - 0s 3ms/step - loss: 0.0146
+Epoch 111/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0145
+1/1 [==============================] - 0s 2ms/step - loss: 0.0145
+Epoch 112/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0144
+1/1 [==============================] - 0s 2ms/step - loss: 0.0144
+Epoch 113/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0143
+1/1 [==============================] - 0s 3ms/step - loss: 0.0143
+Epoch 114/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0142
+1/1 [==============================] - 0s 3ms/step - loss: 0.0142
+Epoch 115/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0141
+1/1 [==============================] - 0s 3ms/step - loss: 0.0141
+Epoch 116/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0140
+1/1 [==============================] - 0s 2ms/step - loss: 0.0140
+Epoch 117/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0139
+1/1 [==============================] - 0s 2ms/step - loss: 0.0139
+Epoch 118/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0138
+1/1 [==============================] - 0s 2ms/step - loss: 0.0138
+Epoch 119/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0137
+1/1 [==============================] - 0s 3ms/step - loss: 0.0137
+Epoch 120/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0136
+1/1 [==============================] - 0s 3ms/step - loss: 0.0136
+Epoch 121/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0135
+1/1 [==============================] - 0s 3ms/step - loss: 0.0135
+Epoch 122/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0134
+1/1 [==============================] - 0s 3ms/step - loss: 0.0134
+Epoch 123/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0133
+1/1 [==============================] - 0s 2ms/step - loss: 0.0133
+Epoch 124/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0132
+1/1 [==============================] - 0s 3ms/step - loss: 0.0132
+Epoch 125/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0131
+1/1 [==============================] - 0s 3ms/step - loss: 0.0131
+Epoch 126/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0130
+1/1 [==============================] - 0s 3ms/step - loss: 0.0130
+Epoch 127/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0129
+1/1 [==============================] - 0s 2ms/step - loss: 0.0129
+Epoch 128/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0128
+1/1 [==============================] - 0s 3ms/step - loss: 0.0128
+Epoch 129/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0127
+1/1 [==============================] - 0s 3ms/step - loss: 0.0127
+Epoch 130/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0127
+1/1 [==============================] - 0s 2ms/step - loss: 0.0127
+Epoch 131/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0126
+1/1 [==============================] - 0s 3ms/step - loss: 0.0126
+Epoch 132/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0125
+1/1 [==============================] - 0s 2ms/step - loss: 0.0125
+Epoch 133/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0124
+1/1 [==============================] - 0s 3ms/step - loss: 0.0124
+Epoch 134/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0123
+1/1 [==============================] - 0s 3ms/step - loss: 0.0123
+Epoch 135/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0122
+1/1 [==============================] - 0s 3ms/step - loss: 0.0122
+Epoch 136/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0121
+1/1 [==============================] - 0s 2ms/step - loss: 0.0121
+Epoch 137/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0120
+1/1 [==============================] - 0s 2ms/step - loss: 0.0120
+Epoch 138/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0119
+1/1 [==============================] - 0s 3ms/step - loss: 0.0119
+Epoch 139/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0118
+1/1 [==============================] - 0s 3ms/step - loss: 0.0118
+Epoch 140/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0118
+1/1 [==============================] - 0s 2ms/step - loss: 0.0118
+Epoch 141/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0117
+1/1 [==============================] - 0s 2ms/step - loss: 0.0117
+Epoch 142/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0116
+1/1 [==============================] - 0s 2ms/step - loss: 0.0116
+Epoch 143/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0115
+1/1 [==============================] - 0s 3ms/step - loss: 0.0115
+Epoch 144/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0114
+1/1 [==============================] - 0s 3ms/step - loss: 0.0114
+Epoch 145/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0113
+1/1 [==============================] - 0s 3ms/step - loss: 0.0113
+Epoch 146/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0113
+1/1 [==============================] - 0s 2ms/step - loss: 0.0113
+Epoch 147/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0112
+1/1 [==============================] - 0s 2ms/step - loss: 0.0112
+Epoch 148/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0111
+1/1 [==============================] - 0s 3ms/step - loss: 0.0111
+Epoch 149/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0110
+1/1 [==============================] - 0s 3ms/step - loss: 0.0110
+Epoch 150/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0109
+1/1 [==============================] - 0s 2ms/step - loss: 0.0109
+Epoch 151/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0108
+1/1 [==============================] - 0s 2ms/step - loss: 0.0108
+Epoch 152/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0108
+1/1 [==============================] - 0s 3ms/step - loss: 0.0108
+Epoch 153/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0107
+1/1 [==============================] - 0s 3ms/step - loss: 0.0107
+Epoch 154/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0106
+1/1 [==============================] - 0s 2ms/step - loss: 0.0106
+Epoch 155/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0105
+1/1 [==============================] - 0s 3ms/step - loss: 0.0105
+Epoch 156/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0105
+1/1 [==============================] - 0s 3ms/step - loss: 0.0105
+Epoch 157/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0104
+1/1 [==============================] - 0s 2ms/step - loss: 0.0104
+Epoch 158/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0103
+1/1 [==============================] - 0s 3ms/step - loss: 0.0103
+Epoch 159/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0102
+1/1 [==============================] - 0s 3ms/step - loss: 0.0102
+Epoch 160/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0102
+1/1 [==============================] - 0s 2ms/step - loss: 0.0102
+Epoch 161/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0101
+1/1 [==============================] - 0s 2ms/step - loss: 0.0101
+Epoch 162/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0100
+1/1 [==============================] - 0s 3ms/step - loss: 0.0100
+Epoch 163/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0099
+1/1 [==============================] - 0s 3ms/step - loss: 0.0099
+Epoch 164/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0099
+1/1 [==============================] - 0s 3ms/step - loss: 0.0099
+Epoch 165/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0098
+1/1 [==============================] - 0s 3ms/step - loss: 0.0098
+Epoch 166/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0097
+1/1 [==============================] - 0s 3ms/step - loss: 0.0097
+Epoch 167/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0097
+1/1 [==============================] - 0s 2ms/step - loss: 0.0097
+Epoch 168/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0096
+1/1 [==============================] - 0s 3ms/step - loss: 0.0096
+Epoch 169/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0095
+1/1 [==============================] - 0s 3ms/step - loss: 0.0095
+Epoch 170/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0094
+1/1 [==============================] - 0s 3ms/step - loss: 0.0094
+Epoch 171/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0094
+1/1 [==============================] - 0s 3ms/step - loss: 0.0094
+Epoch 172/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0093
+1/1 [==============================] - 0s 3ms/step - loss: 0.0093
+Epoch 173/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0092
+1/1 [==============================] - 0s 3ms/step - loss: 0.0092
+Epoch 174/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0092
+1/1 [==============================] - 0s 3ms/step - loss: 0.0092
+Epoch 175/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0091
+1/1 [==============================] - 0s 3ms/step - loss: 0.0091
+Epoch 176/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0090
+1/1 [==============================] - 0s 2ms/step - loss: 0.0090
+Epoch 177/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0090
+1/1 [==============================] - 0s 3ms/step - loss: 0.0090
+Epoch 178/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0089
+1/1 [==============================] - 0s 3ms/step - loss: 0.0089
+Epoch 179/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0088
+1/1 [==============================] - 0s 3ms/step - loss: 0.0088
+Epoch 180/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0088
+1/1 [==============================] - 0s 3ms/step - loss: 0.0088
+Epoch 181/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0087
+1/1 [==============================] - 0s 3ms/step - loss: 0.0087
+Epoch 182/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0086
+1/1 [==============================] - 0s 3ms/step - loss: 0.0086
+Epoch 183/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0086
+1/1 [==============================] - 0s 3ms/step - loss: 0.0086
+Epoch 184/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0085
+1/1 [==============================] - 0s 3ms/step - loss: 0.0085
+Epoch 185/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0085
+1/1 [==============================] - 0s 3ms/step - loss: 0.0085
+Epoch 186/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0084
+1/1 [==============================] - 0s 3ms/step - loss: 0.0084
+Epoch 187/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0083
+1/1 [==============================] - 0s 3ms/step - loss: 0.0083
+Epoch 188/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0083
+1/1 [==============================] - 0s 3ms/step - loss: 0.0083
+Epoch 189/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0082
+1/1 [==============================] - 0s 3ms/step - loss: 0.0082
+Epoch 190/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0082
+1/1 [==============================] - 0s 3ms/step - loss: 0.0082
+Epoch 191/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0081
+1/1 [==============================] - 0s 4ms/step - loss: 0.0081
+Epoch 192/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0080
+1/1 [==============================] - 0s 4ms/step - loss: 0.0080
+Epoch 193/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0080
+1/1 [==============================] - 0s 3ms/step - loss: 0.0080
+Epoch 194/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0079
+1/1 [==============================] - 0s 4ms/step - loss: 0.0079
+Epoch 195/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0079
+1/1 [==============================] - 0s 3ms/step - loss: 0.0079
+Epoch 196/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0078
+1/1 [==============================] - 0s 3ms/step - loss: 0.0078
+Epoch 197/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0078
+1/1 [==============================] - 0s 3ms/step - loss: 0.0078
+Epoch 198/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0077
+1/1 [==============================] - 0s 3ms/step - loss: 0.0077
+Epoch 199/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0076
+1/1 [==============================] - 0s 3ms/step - loss: 0.0076
+Epoch 200/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0076
+1/1 [==============================] - 0s 3ms/step - loss: 0.0076
+Epoch 201/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0075
+1/1 [==============================] - 0s 3ms/step - loss: 0.0075
+Epoch 202/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0075
+1/1 [==============================] - 0s 3ms/step - loss: 0.0075
+Epoch 203/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0074
+1/1 [==============================] - 0s 3ms/step - loss: 0.0074
+Epoch 204/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0074
+1/1 [==============================] - 0s 3ms/step - loss: 0.0074
+Epoch 205/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0073
+1/1 [==============================] - 0s 3ms/step - loss: 0.0073
+Epoch 206/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0073
+1/1 [==============================] - 0s 3ms/step - loss: 0.0073
+Epoch 207/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0072
+1/1 [==============================] - 0s 3ms/step - loss: 0.0072
+Epoch 208/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0072
+1/1 [==============================] - 0s 2ms/step - loss: 0.0072
+Epoch 209/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0071
+1/1 [==============================] - 0s 2ms/step - loss: 0.0071
+Epoch 210/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0070
+1/1 [==============================] - 0s 3ms/step - loss: 0.0070
+Epoch 211/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0070
+1/1 [==============================] - 0s 3ms/step - loss: 0.0070
+Epoch 212/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0069
+1/1 [==============================] - 0s 3ms/step - loss: 0.0069
+Epoch 213/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0069
+1/1 [==============================] - 0s 3ms/step - loss: 0.0069
+Epoch 214/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0068
+1/1 [==============================] - 0s 3ms/step - loss: 0.0068
+Epoch 215/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0068
+1/1 [==============================] - 0s 3ms/step - loss: 0.0068
+Epoch 216/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0067
+1/1 [==============================] - 0s 3ms/step - loss: 0.0067
+Epoch 217/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0067
+1/1 [==============================] - 0s 3ms/step - loss: 0.0067
+Epoch 218/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0066
+1/1 [==============================] - 0s 2ms/step - loss: 0.0066
+Epoch 219/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0066
+1/1 [==============================] - 0s 2ms/step - loss: 0.0066
+Epoch 220/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0066
+1/1 [==============================] - 0s 3ms/step - loss: 0.0066
+Epoch 221/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0065
+1/1 [==============================] - 0s 3ms/step - loss: 0.0065
+Epoch 222/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0065
+1/1 [==============================] - 0s 3ms/step - loss: 0.0065
+Epoch 223/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0064
+1/1 [==============================] - 0s 3ms/step - loss: 0.0064
+Epoch 224/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0064
+1/1 [==============================] - 0s 2ms/step - loss: 0.0064
+Epoch 225/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0063
+1/1 [==============================] - 0s 2ms/step - loss: 0.0063
+Epoch 226/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0063
+1/1 [==============================] - 0s 3ms/step - loss: 0.0063
+Epoch 227/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0062
+1/1 [==============================] - 0s 2ms/step - loss: 0.0062
+Epoch 228/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0062
+1/1 [==============================] - 0s 2ms/step - loss: 0.0062
+Epoch 229/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0061
+1/1 [==============================] - 0s 2ms/step - loss: 0.0061
+Epoch 230/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0061
+1/1 [==============================] - 0s 2ms/step - loss: 0.0061
+Epoch 231/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0060
+1/1 [==============================] - 0s 3ms/step - loss: 0.0060
+Epoch 232/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0060
+1/1 [==============================] - 0s 3ms/step - loss: 0.0060
+Epoch 233/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0060
+1/1 [==============================] - 0s 3ms/step - loss: 0.0060
+Epoch 234/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0059
+1/1 [==============================] - 0s 3ms/step - loss: 0.0059
+Epoch 235/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0059
+1/1 [==============================] - 0s 3ms/step - loss: 0.0059
+Epoch 236/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0058
+1/1 [==============================] - 0s 3ms/step - loss: 0.0058
+Epoch 237/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0058
+1/1 [==============================] - 0s 3ms/step - loss: 0.0058
+Epoch 238/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0057
+1/1 [==============================] - 0s 2ms/step - loss: 0.0057
+Epoch 239/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0057
+1/1 [==============================] - 0s 3ms/step - loss: 0.0057
+Epoch 240/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0057
+1/1 [==============================] - 0s 3ms/step - loss: 0.0057
+Epoch 241/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0056
+1/1 [==============================] - 0s 3ms/step - loss: 0.0056
+Epoch 242/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0056
+1/1 [==============================] - 0s 3ms/step - loss: 0.0056
+Epoch 243/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0055
+1/1 [==============================] - 0s 2ms/step - loss: 0.0055
+Epoch 244/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0055
+1/1 [==============================] - 0s 2ms/step - loss: 0.0055
+Epoch 245/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0055
+1/1 [==============================] - 0s 3ms/step - loss: 0.0055
+Epoch 246/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0054
+1/1 [==============================] - 0s 3ms/step - loss: 0.0054
+Epoch 247/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0054
+1/1 [==============================] - 0s 3ms/step - loss: 0.0054
+Epoch 248/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0053
+1/1 [==============================] - 0s 2ms/step - loss: 0.0053
+Epoch 249/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0053
+1/1 [==============================] - 0s 2ms/step - loss: 0.0053
+Epoch 250/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0053
+1/1 [==============================] - 0s 3ms/step - loss: 0.0053
+Epoch 251/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0052
+1/1 [==============================] - 0s 3ms/step - loss: 0.0052
+Epoch 252/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0052
+1/1 [==============================] - 0s 3ms/step - loss: 0.0052
+Epoch 253/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0051
+1/1 [==============================] - 0s 2ms/step - loss: 0.0051
+Epoch 254/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0051
+1/1 [==============================] - 0s 3ms/step - loss: 0.0051
+Epoch 255/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0051
+1/1 [==============================] - 0s 4ms/step - loss: 0.0051
+Epoch 256/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0050
+1/1 [==============================] - 0s 3ms/step - loss: 0.0050
+Epoch 257/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0050
+1/1 [==============================] - 0s 3ms/step - loss: 0.0050
+Epoch 258/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0050
+1/1 [==============================] - 0s 3ms/step - loss: 0.0050
+Epoch 259/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0049
+1/1 [==============================] - 0s 2ms/step - loss: 0.0049
+Epoch 260/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0049
+1/1 [==============================] - 0s 3ms/step - loss: 0.0049
+Epoch 261/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0049
+1/1 [==============================] - 0s 2ms/step - loss: 0.0049
+Epoch 262/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0048
+1/1 [==============================] - 0s 2ms/step - loss: 0.0048
+Epoch 263/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0048
+1/1 [==============================] - 0s 2ms/step - loss: 0.0048
+Epoch 264/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0047
+1/1 [==============================] - 0s 3ms/step - loss: 0.0047
+Epoch 265/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0047
+1/1 [==============================] - 0s 3ms/step - loss: 0.0047
+Epoch 266/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0047
+1/1 [==============================] - 0s 2ms/step - loss: 0.0047
+Epoch 267/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0046
+1/1 [==============================] - 0s 3ms/step - loss: 0.0046
+Epoch 268/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0046
+1/1 [==============================] - 0s 2ms/step - loss: 0.0046
+Epoch 269/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0046
+1/1 [==============================] - 0s 3ms/step - loss: 0.0046
+Epoch 270/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0045
+1/1 [==============================] - 0s 3ms/step - loss: 0.0045
+Epoch 271/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0045
+1/1 [==============================] - 0s 3ms/step - loss: 0.0045
+Epoch 272/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0045
+1/1 [==============================] - 0s 3ms/step - loss: 0.0045
+Epoch 273/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0044
+1/1 [==============================] - 0s 2ms/step - loss: 0.0044
+Epoch 274/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0044
+1/1 [==============================] - 0s 3ms/step - loss: 0.0044
+Epoch 275/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0044
+1/1 [==============================] - 0s 3ms/step - loss: 0.0044
+Epoch 276/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0043
+1/1 [==============================] - 0s 2ms/step - loss: 0.0043
+Epoch 277/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0043
+1/1 [==============================] - 0s 2ms/step - loss: 0.0043
+Epoch 278/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0043
+1/1 [==============================] - 0s 2ms/step - loss: 0.0043
+Epoch 279/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0043
+1/1 [==============================] - 0s 3ms/step - loss: 0.0043
+Epoch 280/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0042
+1/1 [==============================] - 0s 3ms/step - loss: 0.0042
+Epoch 281/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0042
+1/1 [==============================] - 0s 3ms/step - loss: 0.0042
+Epoch 282/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0042
+1/1 [==============================] - 0s 2ms/step - loss: 0.0042
+Epoch 283/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0041
+1/1 [==============================] - 0s 3ms/step - loss: 0.0041
+Epoch 284/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0041
+1/1 [==============================] - 0s 3ms/step - loss: 0.0041
+Epoch 285/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0041
+1/1 [==============================] - 0s 3ms/step - loss: 0.0041
+Epoch 286/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0040
+1/1 [==============================] - 0s 2ms/step - loss: 0.0040
+Epoch 287/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0040
+1/1 [==============================] - 0s 2ms/step - loss: 0.0040
+Epoch 288/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0040
+1/1 [==============================] - 0s 2ms/step - loss: 0.0040
+Epoch 289/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0040
+1/1 [==============================] - 0s 3ms/step - loss: 0.0040
+Epoch 290/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0039
+1/1 [==============================] - 0s 3ms/step - loss: 0.0039
+Epoch 291/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0039
+1/1 [==============================] - 0s 2ms/step - loss: 0.0039
+Epoch 292/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0039
+1/1 [==============================] - 0s 3ms/step - loss: 0.0039
+Epoch 293/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0038
+1/1 [==============================] - 0s 3ms/step - loss: 0.0038
+Epoch 294/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0038
+1/1 [==============================] - 0s 4ms/step - loss: 0.0038
+Epoch 295/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0038
+1/1 [==============================] - 0s 3ms/step - loss: 0.0038
+Epoch 296/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0038
+1/1 [==============================] - 0s 3ms/step - loss: 0.0038
+Epoch 297/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0037
+1/1 [==============================] - 0s 3ms/step - loss: 0.0037
+Epoch 298/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0037
+1/1 [==============================] - 0s 3ms/step - loss: 0.0037
+Epoch 299/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0037
+1/1 [==============================] - 0s 3ms/step - loss: 0.0037
+Epoch 300/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0036
+1/1 [==============================] - 0s 3ms/step - loss: 0.0036
+Epoch 301/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0036
+1/1 [==============================] - 0s 3ms/step - loss: 0.0036
+Epoch 302/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0036
+1/1 [==============================] - 0s 3ms/step - loss: 0.0036
+Epoch 303/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0036
+1/1 [==============================] - 0s 3ms/step - loss: 0.0036
+Epoch 304/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0035
+1/1 [==============================] - 0s 3ms/step - loss: 0.0035
+Epoch 305/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0035
+1/1 [==============================] - 0s 3ms/step - loss: 0.0035
+Epoch 306/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0035
+1/1 [==============================] - 0s 2ms/step - loss: 0.0035
+Epoch 307/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0035
+1/1 [==============================] - 0s 3ms/step - loss: 0.0035
+Epoch 308/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0034
+1/1 [==============================] - 0s 3ms/step - loss: 0.0034
+Epoch 309/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0034
+1/1 [==============================] - 0s 3ms/step - loss: 0.0034
+Epoch 310/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0034
+1/1 [==============================] - 0s 3ms/step - loss: 0.0034
+Epoch 311/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0034
+1/1 [==============================] - 0s 3ms/step - loss: 0.0034
+Epoch 312/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0033
+1/1 [==============================] - 0s 3ms/step - loss: 0.0033
+Epoch 313/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0033
+1/1 [==============================] - 0s 2ms/step - loss: 0.0033
+Epoch 314/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0033
+1/1 [==============================] - 0s 3ms/step - loss: 0.0033
+Epoch 315/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0033
+1/1 [==============================] - 0s 2ms/step - loss: 0.0033
+Epoch 316/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0032
+1/1 [==============================] - 0s 3ms/step - loss: 0.0032
+Epoch 317/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0032
+1/1 [==============================] - 0s 3ms/step - loss: 0.0032
+Epoch 318/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0032
+1/1 [==============================] - 0s 3ms/step - loss: 0.0032
+Epoch 319/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0032
+1/1 [==============================] - 0s 2ms/step - loss: 0.0032
+Epoch 320/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0032
+1/1 [==============================] - 0s 3ms/step - loss: 0.0032
+Epoch 321/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0031
+1/1 [==============================] - 0s 3ms/step - loss: 0.0031
+Epoch 322/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0031
+1/1 [==============================] - 0s 3ms/step - loss: 0.0031
+Epoch 323/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0031
+1/1 [==============================] - 0s 3ms/step - loss: 0.0031
+Epoch 324/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0031
+1/1 [==============================] - 0s 2ms/step - loss: 0.0031
+Epoch 325/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0030
+1/1 [==============================] - 0s 3ms/step - loss: 0.0030
+Epoch 326/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0030
+1/1 [==============================] - 0s 3ms/step - loss: 0.0030
+Epoch 327/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0030
+1/1 [==============================] - 0s 3ms/step - loss: 0.0030
+Epoch 328/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0030
+1/1 [==============================] - 0s 3ms/step - loss: 0.0030
+Epoch 329/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0030
+1/1 [==============================] - 0s 2ms/step - loss: 0.0030
+Epoch 330/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0029
+1/1 [==============================] - 0s 3ms/step - loss: 0.0029
+Epoch 331/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0029
+1/1 [==============================] - 0s 3ms/step - loss: 0.0029
+Epoch 332/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0029
+1/1 [==============================] - 0s 3ms/step - loss: 0.0029
+Epoch 333/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0029
+1/1 [==============================] - 0s 2ms/step - loss: 0.0029
+Epoch 334/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0028
+1/1 [==============================] - 0s 2ms/step - loss: 0.0028
+Epoch 335/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0028
+1/1 [==============================] - 0s 3ms/step - loss: 0.0028
+Epoch 336/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0028
+1/1 [==============================] - 0s 3ms/step - loss: 0.0028
+Epoch 337/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0028
+1/1 [==============================] - 0s 3ms/step - loss: 0.0028
+Epoch 338/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0028
+1/1 [==============================] - 0s 3ms/step - loss: 0.0028
+Epoch 339/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0027
+1/1 [==============================] - 0s 3ms/step - loss: 0.0027
+Epoch 340/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0027
+1/1 [==============================] - 0s 3ms/step - loss: 0.0027
+Epoch 341/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0027
+1/1 [==============================] - 0s 3ms/step - loss: 0.0027
+Epoch 342/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0027
+1/1 [==============================] - 0s 3ms/step - loss: 0.0027
+Epoch 343/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0027
+1/1 [==============================] - 0s 3ms/step - loss: 0.0027
+Epoch 344/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0026
+1/1 [==============================] - 0s 3ms/step - loss: 0.0026
+Epoch 345/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0026
+1/1 [==============================] - 0s 2ms/step - loss: 0.0026
+Epoch 346/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0026
+1/1 [==============================] - 0s 3ms/step - loss: 0.0026
+Epoch 347/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0026
+1/1 [==============================] - 0s 2ms/step - loss: 0.0026
+Epoch 348/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0026
+1/1 [==============================] - 0s 2ms/step - loss: 0.0026
+Epoch 349/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0026
+1/1 [==============================] - 0s 3ms/step - loss: 0.0026
+Epoch 350/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0025
+1/1 [==============================] - 0s 3ms/step - loss: 0.0025
+Epoch 351/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0025
+1/1 [==============================] - 0s 3ms/step - loss: 0.0025
+Epoch 352/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0025
+1/1 [==============================] - 0s 2ms/step - loss: 0.0025
+Epoch 353/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0025
+1/1 [==============================] - 0s 2ms/step - loss: 0.0025
+Epoch 354/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0025
+1/1 [==============================] - 0s 2ms/step - loss: 0.0025
+Epoch 355/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0024
+1/1 [==============================] - 0s 3ms/step - loss: 0.0024
+Epoch 356/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0024
+1/1 [==============================] - 0s 2ms/step - loss: 0.0024
+Epoch 357/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0024
+1/1 [==============================] - 0s 3ms/step - loss: 0.0024
+Epoch 358/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0024
+1/1 [==============================] - 0s 3ms/step - loss: 0.0024
+Epoch 359/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0024
+1/1 [==============================] - 0s 3ms/step - loss: 0.0024
+Epoch 360/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0024
+1/1 [==============================] - 0s 3ms/step - loss: 0.0024
+Epoch 361/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0023
+1/1 [==============================] - 0s 3ms/step - loss: 0.0023
+Epoch 362/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0023
+1/1 [==============================] - 0s 2ms/step - loss: 0.0023
+Epoch 363/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0023
+1/1 [==============================] - 0s 2ms/step - loss: 0.0023
+Epoch 364/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0023
+1/1 [==============================] - 0s 2ms/step - loss: 0.0023
+Epoch 365/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0023
+1/1 [==============================] - 0s 3ms/step - loss: 0.0023
+Epoch 366/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0023
+1/1 [==============================] - 0s 2ms/step - loss: 0.0023
+Epoch 367/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0022
+1/1 [==============================] - 0s 2ms/step - loss: 0.0022
+Epoch 368/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0022
+1/1 [==============================] - 0s 2ms/step - loss: 0.0022
+Epoch 369/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0022
+1/1 [==============================] - 0s 2ms/step - loss: 0.0022
+Epoch 370/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0022
+1/1 [==============================] - 0s 3ms/step - loss: 0.0022
+Epoch 371/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0022
+1/1 [==============================] - 0s 3ms/step - loss: 0.0022
+Epoch 372/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0022
+1/1 [==============================] - 0s 3ms/step - loss: 0.0022
+Epoch 373/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0021
+1/1 [==============================] - 0s 2ms/step - loss: 0.0021
+Epoch 374/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0021
+1/1 [==============================] - 0s 2ms/step - loss: 0.0021
+Epoch 375/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0021
+1/1 [==============================] - 0s 3ms/step - loss: 0.0021
+Epoch 376/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0021
+1/1 [==============================] - 0s 3ms/step - loss: 0.0021
+Epoch 377/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0021
+1/1 [==============================] - 0s 2ms/step - loss: 0.0021
+Epoch 378/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0021
+1/1 [==============================] - 0s 2ms/step - loss: 0.0021
+Epoch 379/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0020
+1/1 [==============================] - 0s 2ms/step - loss: 0.0020
+Epoch 380/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0020
+1/1 [==============================] - 0s 3ms/step - loss: 0.0020
+Epoch 381/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0020
+1/1 [==============================] - 0s 3ms/step - loss: 0.0020
+Epoch 382/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0020
+1/1 [==============================] - 0s 3ms/step - loss: 0.0020
+Epoch 383/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0020
+1/1 [==============================] - 0s 2ms/step - loss: 0.0020
+Epoch 384/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0020
+1/1 [==============================] - 0s 2ms/step - loss: 0.0020
+Epoch 385/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0020
+1/1 [==============================] - 0s 3ms/step - loss: 0.0020
+Epoch 386/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0019
+1/1 [==============================] - 0s 3ms/step - loss: 0.0019
+Epoch 387/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0019
+1/1 [==============================] - 0s 3ms/step - loss: 0.0019
+Epoch 388/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0019
+1/1 [==============================] - 0s 2ms/step - loss: 0.0019
+Epoch 389/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0019
+1/1 [==============================] - 0s 3ms/step - loss: 0.0019
+Epoch 390/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0019
+1/1 [==============================] - 0s 3ms/step - loss: 0.0019
+Epoch 391/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0019
+1/1 [==============================] - 0s 3ms/step - loss: 0.0019
+Epoch 392/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0019
+1/1 [==============================] - 0s 2ms/step - loss: 0.0019
+Epoch 393/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0018
+1/1 [==============================] - 0s 3ms/step - loss: 0.0018
+Epoch 394/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0018
+1/1 [==============================] - 0s 2ms/step - loss: 0.0018
+Epoch 395/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0018
+1/1 [==============================] - 0s 3ms/step - loss: 0.0018
+Epoch 396/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0018
+1/1 [==============================] - 0s 3ms/step - loss: 0.0018
+Epoch 397/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0018
+1/1 [==============================] - 0s 2ms/step - loss: 0.0018
+Epoch 398/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0018
+1/1 [==============================] - 0s 2ms/step - loss: 0.0018
+Epoch 399/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0018
+1/1 [==============================] - 0s 3ms/step - loss: 0.0018
+Epoch 400/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0018
+1/1 [==============================] - 0s 3ms/step - loss: 0.0018
+Epoch 401/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0017
+1/1 [==============================] - 0s 3ms/step - loss: 0.0017
+Epoch 402/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0017
+1/1 [==============================] - 0s 3ms/step - loss: 0.0017
+Epoch 403/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0017
+1/1 [==============================] - 0s 2ms/step - loss: 0.0017
+Epoch 404/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0017
+1/1 [==============================] - 0s 2ms/step - loss: 0.0017
+Epoch 405/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0017
+1/1 [==============================] - 0s 3ms/step - loss: 0.0017
+Epoch 406/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0017
+1/1 [==============================] - 0s 2ms/step - loss: 0.0017
+Epoch 407/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0017
+1/1 [==============================] - 0s 3ms/step - loss: 0.0017
+Epoch 408/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0017
+1/1 [==============================] - 0s 2ms/step - loss: 0.0017
+Epoch 409/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0016
+1/1 [==============================] - 0s 3ms/step - loss: 0.0016
+Epoch 410/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0016
+1/1 [==============================] - 0s 3ms/step - loss: 0.0016
+Epoch 411/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0016
+1/1 [==============================] - 0s 3ms/step - loss: 0.0016
+Epoch 412/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0016
+1/1 [==============================] - 0s 2ms/step - loss: 0.0016
+Epoch 413/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0016
+1/1 [==============================] - 0s 2ms/step - loss: 0.0016
+Epoch 414/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0016
+1/1 [==============================] - 0s 3ms/step - loss: 0.0016
+Epoch 415/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0016
+1/1 [==============================] - 0s 3ms/step - loss: 0.0016
+Epoch 416/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0016
+1/1 [==============================] - 0s 3ms/step - loss: 0.0016
+Epoch 417/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0016
+1/1 [==============================] - 0s 3ms/step - loss: 0.0016
+Epoch 418/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0015
+1/1 [==============================] - 0s 3ms/step - loss: 0.0015
+Epoch 419/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0015
+1/1 [==============================] - 0s 3ms/step - loss: 0.0015
+Epoch 420/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0015
+1/1 [==============================] - 0s 3ms/step - loss: 0.0015
+Epoch 421/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0015
+1/1 [==============================] - 0s 3ms/step - loss: 0.0015
+Epoch 422/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0015
+1/1 [==============================] - 0s 3ms/step - loss: 0.0015
+Epoch 423/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0015
+1/1 [==============================] - 0s 3ms/step - loss: 0.0015
+Epoch 424/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0015
+1/1 [==============================] - 0s 3ms/step - loss: 0.0015
+Epoch 425/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0015
+1/1 [==============================] - 0s 3ms/step - loss: 0.0015
+Epoch 426/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0015
+1/1 [==============================] - 0s 2ms/step - loss: 0.0015
+Epoch 427/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0014
+1/1 [==============================] - 0s 3ms/step - loss: 0.0014
+Epoch 428/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0014
+1/1 [==============================] - 0s 3ms/step - loss: 0.0014
+Epoch 429/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0014
+1/1 [==============================] - 0s 3ms/step - loss: 0.0014
+Epoch 430/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0014
+1/1 [==============================] - 0s 3ms/step - loss: 0.0014
+Epoch 431/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0014
+1/1 [==============================] - 0s 2ms/step - loss: 0.0014
+Epoch 432/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0014
+1/1 [==============================] - 0s 2ms/step - loss: 0.0014
+Epoch 433/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0014
+1/1 [==============================] - 0s 3ms/step - loss: 0.0014
+Epoch 434/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0014
+1/1 [==============================] - 0s 3ms/step - loss: 0.0014
+Epoch 435/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0014
+1/1 [==============================] - 0s 3ms/step - loss: 0.0014
+Epoch 436/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0014
+1/1 [==============================] - 0s 3ms/step - loss: 0.0014
+Epoch 437/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0013
+1/1 [==============================] - 0s 2ms/step - loss: 0.0013
+Epoch 438/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0013
+1/1 [==============================] - 0s 3ms/step - loss: 0.0013
+Epoch 439/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0013
+1/1 [==============================] - 0s 3ms/step - loss: 0.0013
+Epoch 440/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0013
+1/1 [==============================] - 0s 2ms/step - loss: 0.0013
+Epoch 441/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0013
+1/1 [==============================] - 0s 3ms/step - loss: 0.0013
+Epoch 442/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0013
+1/1 [==============================] - 0s 2ms/step - loss: 0.0013
+Epoch 443/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0013
+1/1 [==============================] - 0s 3ms/step - loss: 0.0013
+Epoch 444/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0013
+1/1 [==============================] - 0s 3ms/step - loss: 0.0013
+Epoch 445/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0013
+1/1 [==============================] - 0s 3ms/step - loss: 0.0013
+Epoch 446/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0013
+1/1 [==============================] - 0s 2ms/step - loss: 0.0013
+Epoch 447/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0012
+1/1 [==============================] - 0s 2ms/step - loss: 0.0012
+Epoch 448/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0012
+1/1 [==============================] - 0s 3ms/step - loss: 0.0012
+Epoch 449/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0012
+1/1 [==============================] - 0s 3ms/step - loss: 0.0012
+Epoch 450/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0012
+1/1 [==============================] - 0s 3ms/step - loss: 0.0012
+Epoch 451/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0012
+1/1 [==============================] - 0s 2ms/step - loss: 0.0012
+Epoch 452/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0012
+1/1 [==============================] - 0s 3ms/step - loss: 0.0012
+Epoch 453/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0012
+1/1 [==============================] - 0s 3ms/step - loss: 0.0012
+Epoch 454/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0012
+1/1 [==============================] - 0s 3ms/step - loss: 0.0012
+Epoch 455/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0012
+1/1 [==============================] - 0s 3ms/step - loss: 0.0012
+Epoch 456/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0012
+1/1 [==============================] - 0s 3ms/step - loss: 0.0012
+Epoch 457/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0012
+1/1 [==============================] - 0s 2ms/step - loss: 0.0012
+Epoch 458/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0011
+1/1 [==============================] - 0s 3ms/step - loss: 0.0011
+Epoch 459/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0011
+1/1 [==============================] - 0s 2ms/step - loss: 0.0011
+Epoch 460/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0011
+1/1 [==============================] - 0s 2ms/step - loss: 0.0011
+Epoch 461/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0011
+1/1 [==============================] - 0s 2ms/step - loss: 0.0011
+Epoch 462/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0011
+1/1 [==============================] - 0s 2ms/step - loss: 0.0011
+Epoch 463/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0011
+1/1 [==============================] - 0s 3ms/step - loss: 0.0011
+Epoch 464/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0011
+1/1 [==============================] - 0s 3ms/step - loss: 0.0011
+Epoch 465/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0011
+1/1 [==============================] - 0s 2ms/step - loss: 0.0011
+Epoch 466/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0011
+1/1 [==============================] - 0s 3ms/step - loss: 0.0011
+Epoch 467/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0011
+1/1 [==============================] - 0s 3ms/step - loss: 0.0011
+Epoch 468/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0011
+1/1 [==============================] - 0s 3ms/step - loss: 0.0011
+Epoch 469/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0011
+1/1 [==============================] - 0s 3ms/step - loss: 0.0011
+Epoch 470/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0011
+1/1 [==============================] - 0s 2ms/step - loss: 0.0011
+Epoch 471/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0010
+1/1 [==============================] - 0s 3ms/step - loss: 0.0010
+Epoch 472/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0010
+1/1 [==============================] - 0s 2ms/step - loss: 0.0010
+Epoch 473/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0010
+1/1 [==============================] - 0s 3ms/step - loss: 0.0010
+Epoch 474/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0010
+1/1 [==============================] - 0s 2ms/step - loss: 0.0010
+Epoch 475/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0010
+1/1 [==============================] - 0s 2ms/step - loss: 0.0010
+Epoch 476/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0010
+1/1 [==============================] - 0s 2ms/step - loss: 0.0010
+Epoch 477/500
+
+1/1 [==============================] - ETA: 0s - loss: 0.0010
+1/1 [==============================] - 0s 2ms/step - loss: 0.0010
+Epoch 478/500
+
+1/1 [==============================] - ETA: 0s - loss: 9.9305e-04
+1/1 [==============================] - 0s 3ms/step - loss: 9.9305e-04
+Epoch 479/500
+
+1/1 [==============================] - ETA: 0s - loss: 9.8581e-04
+1/1 [==============================] - 0s 3ms/step - loss: 9.8581e-04
+Epoch 480/500
+
+1/1 [==============================] - ETA: 0s - loss: 9.7863e-04
+1/1 [==============================] - 0s 2ms/step - loss: 9.7863e-04
+Epoch 481/500
+
+1/1 [==============================] - ETA: 0s - loss: 9.7150e-04
+1/1 [==============================] - 0s 3ms/step - loss: 9.7150e-04
+Epoch 482/500
+
+1/1 [==============================] - ETA: 0s - loss: 9.6442e-04
+1/1 [==============================] - 0s 2ms/step - loss: 9.6442e-04
+Epoch 483/500
+
+1/1 [==============================] - ETA: 0s - loss: 9.5739e-04
+1/1 [==============================] - 0s 3ms/step - loss: 9.5739e-04
+Epoch 484/500
+
+1/1 [==============================] - ETA: 0s - loss: 9.5042e-04
+1/1 [==============================] - 0s 3ms/step - loss: 9.5042e-04
+Epoch 485/500
+
+1/1 [==============================] - ETA: 0s - loss: 9.4350e-04
+1/1 [==============================] - 0s 3ms/step - loss: 9.4350e-04
+Epoch 486/500
+
+1/1 [==============================] - ETA: 0s - loss: 9.3662e-04
+1/1 [==============================] - 0s 3ms/step - loss: 9.3662e-04
+Epoch 487/500
+
+1/1 [==============================] - ETA: 0s - loss: 9.2980e-04
+1/1 [==============================] - 0s 2ms/step - loss: 9.2980e-04
+Epoch 488/500
+
+1/1 [==============================] - ETA: 0s - loss: 9.2302e-04
+1/1 [==============================] - 0s 3ms/step - loss: 9.2302e-04
+Epoch 489/500
+
+1/1 [==============================] - ETA: 0s - loss: 9.1630e-04
+1/1 [==============================] - 0s 2ms/step - loss: 9.1630e-04
+Epoch 490/500
+
+1/1 [==============================] - ETA: 0s - loss: 9.0962e-04
+1/1 [==============================] - 0s 2ms/step - loss: 9.0962e-04
+Epoch 491/500
+
+1/1 [==============================] - ETA: 0s - loss: 9.0300e-04
+1/1 [==============================] - 0s 2ms/step - loss: 9.0300e-04
+Epoch 492/500
+
+1/1 [==============================] - ETA: 0s - loss: 8.9642e-04
+1/1 [==============================] - 0s 2ms/step - loss: 8.9642e-04
+Epoch 493/500
+
+1/1 [==============================] - ETA: 0s - loss: 8.8989e-04
+1/1 [==============================] - 0s 3ms/step - loss: 8.8989e-04
+Epoch 494/500
+
+1/1 [==============================] - ETA: 0s - loss: 8.8340e-04
+1/1 [==============================] - 0s 3ms/step - loss: 8.8340e-04
+Epoch 495/500
+
+1/1 [==============================] - ETA: 0s - loss: 8.7697e-04
+1/1 [==============================] - 0s 3ms/step - loss: 8.7697e-04
+Epoch 496/500
+
+1/1 [==============================] - ETA: 0s - loss: 8.7058e-04
+1/1 [==============================] - 0s 3ms/step - loss: 8.7058e-04
+Epoch 497/500
+
+1/1 [==============================] - ETA: 0s - loss: 8.6423e-04
+1/1 [==============================] - 0s 3ms/step - loss: 8.6423e-04
+Epoch 498/500
+
+1/1 [==============================] - ETA: 0s - loss: 8.5794e-04
+1/1 [==============================] - 0s 3ms/step - loss: 8.5794e-04
+Epoch 499/500
+
+1/1 [==============================] - ETA: 0s - loss: 8.5169e-04
+1/1 [==============================] - 0s 3ms/step - loss: 8.5169e-04
+Epoch 500/500
+
+1/1 [==============================] - ETA: 0s - loss: 8.4548e-04
+1/1 [==============================] - 0s 3ms/step - loss: 8.4548e-04</code></pre>
+</div>
+</div>
+<div id="e1830e42" class="cell" data-execution_count="8">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>new_n_bedrooms <span class="op">=</span> np.array([<span class="fl">7.0</span>])</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>predicted_price <span class="op">=</span> trained_model.predict(new_n_bedrooms, verbose<span class="op">=</span><span class="va">False</span>).item()</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Your model predicted a price of </span><span class="sc">{</span>predicted_price<span class="sc">:.2f}</span><span class="ss"> hundreds of thousands of dollars for a </span><span class="sc">{</span><span class="bu">int</span>(new_n_bedrooms.item())<span class="sc">}</span><span class="ss"> bedrooms house"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Your model predicted a price of 4.04 hundreds of thousands of dollars for a 7 bedrooms house</code></pre>
+</div>
+</div>
+</section>
+<section id="resultats" class="level1" data-number="6">
+<h1 data-number="6"><span class="header-section-number">6</span> Resultats</h1>
+<section id="relation-lineaire" class="level2" data-number="6.1">
+<h2 data-number="6.1" class="anchored" data-anchor-id="relation-lineaire"><span class="header-section-number">6.1</span> Relation lineaire</h2>
+<div id="85804441" class="cell" data-execution_count="9">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>n_bedrooms <span class="op">=</span> np.array([<span class="fl">1.0</span>, <span class="fl">2.0</span>, <span class="fl">3.0</span>, <span class="fl">4.0</span>, <span class="fl">5.0</span>, <span class="fl">6.0</span>], dtype<span class="op">=</span><span class="bu">float</span>)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>price_in_hundreds_of_thousands <span class="op">=</span> np.array([<span class="fl">1.0</span>, <span class="fl">1.5</span>, <span class="fl">2.0</span>, <span class="fl">2.5</span>, <span class="fl">3.0</span>, <span class="fl">3.5</span>], dtype<span class="op">=</span><span class="bu">float</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Une <strong>relation linéaire</strong> signifie que lorsque une grandeur augmente d’une quantité fixe, l’autre grandeur augmente également d’une quantité fixe correspondante. Autrement dit, si on trace les points sur un graphique, ils sont alignés sur une droite.</p>
+<p>En reprenant nos données :</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Nombre de chambres</th>
+<th>Prix (centaines de milliers $)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>1.0</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>1.5</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td>2.0</td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td>2.5</td>
+</tr>
+<tr class="odd">
+<td>5</td>
+<td>3.0</td>
+</tr>
+<tr class="even">
+<td>6</td>
+<td>3.5</td>
+</tr>
+</tbody>
+</table>
+<p>À chaque fois que le nombre de chambres <strong>augmente de 1</strong>, le prix augmente toujours <strong>exactement de 0.5</strong> — cette augmentation est constante (1→2 : +0.5, 2→3 : +0.5, 3→4 : +0.5, etc.). C’est précisément la caractéristique d’une relation linéaire.</p>
+<p>Sous forme d’équation, cela correspond à la formule bien connue d’une droite :</p>
+<p><span class="math display">\[
+\text{prix} = a \times (\text{nombre de chambres}) + b
+\]</span></p>
+<p>Avec nos données : <span class="math inline">\(\text{prix} = 0.5 \times (\text{nombre de chambres}) + 0.5\)</span></p>
+<p>Si on trace les points <span class="math inline">\((1, 1.0)\)</span>, <span class="math inline">\((2, 1.5)\)</span>, <span class="math inline">\((3, 2.0)\)</span>, etc. sur un graphique, ils sont <strong>parfaitement alignés sur une droite</strong> — d’où le terme “linéaire”.</p>
+</section>
+<section id="explication" class="level2" data-number="6.2">
+<h2 data-number="6.2" class="anchored" data-anchor-id="explication"><span class="header-section-number">6.2</span> Explication</h2>
+<p>Chaque valeur de n_bedrooms correspond à une valeur de price_in_hundreds_of_thousands : une maison de 1 chambre coûte 1.0 (100k), une maison de 2 chambres coûte 1.5 (150k), et ainsi de suite jusqu’à 6 chambres pour un prix de 3.5 (350k). On observe que le prix suit une relation linéaire : il augmente de 0.5 (50k) à chaque chambre supplémentaire.</p>
+<p>Une fois le modèle entraîné sur ces données, on peut lui demander de prédire le prix d’une maison avec un nombre de chambres qu’il n’a jamais vu pendant l’entraînement, par exemple 7 chambres. Le modèle prédit alors un prix de 4.03 centaines de milliers de dollars (soit environ 403k) pour une maison de 7 chambres.</p>
+<p>Ce résultat est cohérent avec la relation linéaire observée dans les données : en suivant la tendance (1.0 + 0.5 × (7 - 1) = 4.0), on s’attendrait à un prix théorique de 4.0. La légère différence (4.03 au lieu de 4.0) s’explique par le fait que le modèle a appris cette relation de façon approximative à partir des données, plutôt que de calculer la formule exacte.</p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<div id="preloader">
+    <div class="loader-content">
+        <div class="loader-center-group">
+            <div class="spinner"></div> 
+
+            <div class="loader-letter-container">
+                <span class="loader-letter">V</span>
+            </div>
+        </div>
+        
+        <h2 class="loader-text">MADE BY NGUYEN DUC HOANG VIET</h2>
+        <p class="loader-subtext"> PROJET Machine Leaning  </p>
+    </div>
+</div>
+
+<script>
+    // Giữ nguyên đoạn script
+    window.addEventListener('load', function () {
+        const preloader = document.getElementById('preloader');
+        setTimeout(function() {
+            preloader.classList.add('fade-out');
+        }, 350); //1200
+    });
+</script>
+<div style="text-align:center; font-size:0.85em; color:#888; padding:25px;">
+  <strong>© 2026 NGUYEN Duc Hoang Viet — Tous droits réservés.</strong><br>
+  <strong>M1 Université de Lille — Projet Machine Learning <strong><br>
+  Toute reproduction, diffusion ou utilisation sans autorisation est interdite.
+</strong></strong></div><strong><strong>
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</strong></strong></div><strong><strong> <!-- /content -->
+
+
+
+
+</strong></strong></body></html>

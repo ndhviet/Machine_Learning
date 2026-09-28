@@ -1,0 +1,20 @@
+/.quarto/
+
+**/*.quarto_ipynb
+
+# Python virtual environment
+.venv/
+__pycache__/
+*.pyc
+
+# Quarto build artifacts
+*_files/
+*_cache/
+
+# R
+.Rhistory
+.RData
+.Rproj.user/
+
+# macOS
+.DS_Store

@@ -1,0 +1,20 @@
+---
+title: "Bienvenue sur le projet Machine Learning"
+author: "NGUYEN Duc Hoang Viet"
+---
+
+# Présentation du projet
+
+
+# Organisation des codes
+
+Le projet est divisé en plusieurs parties :
+
+-   **Partie 1 :** Housing Prices
+
+-   **Partie 2 :** Dataset FMINIST
+
+-   **Partie 3 :** Dataset Horse vs Human
+
+-   **Partie 4 :** Dataset Emoji
+

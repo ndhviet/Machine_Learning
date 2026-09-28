@@ -1,0 +1,231 @@
+/* Màu chữ mặc định trên thanh menu */
+.navbar-brand,
+.navbar-nav .nav-link {
+  color: #ffffff !important;
+  font-weight: 500;
+}
+
+/* Mục đang active (trang đang xem) - nổi bật màu cyan */
+.navbar-nav .nav-link.active {
+  color: #00d2d3 !important;
+  font-weight: 700;
+}
+
+/* Hiệu ứng hover cho menu */
+.navbar-nav .nav-link:hover {
+  color: #7efbfa !important;
+}
+
+/* Đổi màu toàn bộ các đường link trong bài viết sang màu xanh lá đồng bộ */
+a {
+  color: #00d2d3;
+  text-decoration: none;
+}
+a:hover {
+  color: #00d2d3;
+  text-decoration: underline;
+}
+
+/* Làm mượt các tiêu đề H1, H2 (Présentation du projet...) */
+h1, h2, h3 {
+  color: #2c3e50;
+  font-weight: 700;
+  margin-top: 1.5em;
+}
+
+/* Tạo điểm nhấn cho các danh sách bullet point */
+ul li {
+  margin-bottom: 8px;
+}
+
+#TOC a.active,
+.sidebar nav a.active,
+nav.toc-active a.active,
+.toc-actions a.active,
+#toc-title ~ nav a.active {
+  color: #00d2d3 !important;
+  border-left-color: #00d2d3 !important;
+}
+
+#TOC a:hover,
+.sidebar nav a:hover,
+nav.toc-active a:hover {
+  color: #00d2d3 !important;
+}
+
+/* Tăng khoảng cách giữa các mục trong Mục lục (TOC) bên phải */
+#TOC li,
+.sidebar nav li {
+  margin-bottom: 12px;
+}
+
+#TOC a,
+.sidebar nav a {
+  display: inline-block;
+  padding: 4px 0;
+}
+
+
+
+
+/* ==========================================
+   MÀN HÌNH LOADING (PRELOADER) 
+============================================= */
+#preloader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background-color: #0b0c10; /* Màu nền đen tối */
+    z-index: 999999; /* Đảm bảo đè lên toàn bộ dashboard của Quarto */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.6s ease, visibility 0.6s ease;
+}
+
+.spinner {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 25px;
+    border-radius: 50%;
+    
+    /* Sử dụng conic-gradient để tạo dải màu xoay mượt mà chuẩn xác như ảnh logo */
+    background: conic-gradient(
+        #00b894, /* Xanh lục bảo */
+        #00d2d3, /* Xanh cyan neon */
+        #ffb800, /* Vàng hổ phách */
+        #ff2a4b, /* Đỏ Crimson */
+        #00b894  /* Khép góc quay lại màu xanh */
+    );
+    
+    /* Tạo lỗ rỗng ở giữa để biến khối tròn thành một cái vòng (Spinner) */
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    -webkit-mask-composite: xor;
+    
+    padding: 3px; /* Đây chính là độ dày (thickness) của vòng spinner */
+    
+    /* Hiệu ứng hắt sáng nhẹ ra nền tối giống hệt trên web của bạn */
+    box-shadow: 0 0 15px rgba(0, 210, 211, 0.25);
+    
+    /* Animation quay giật vô lăng kiểu Jarvis */
+    animation: spin 1.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+.loader-content {
+    text-align: center;
+}
+
+/* Vòng xoay màu sắc gradient */
+
+
+/* Tên tác giả giống style ảnh 1 */
+.loader-text {
+    color: #f3a683 !important;
+    font-family: 'Courier New', Courier, monospace !important;
+    letter-spacing: 5px !important;
+    font-size: 16px !important;
+    font-weight: bold;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+}
+
+.loader-subtext {
+    color: #57606f !important;
+    font-size: 11px !important;
+    letter-spacing: 3px !important;
+    text-transform: uppercase;
+}
+
+/* Hiệu ứng xoay tròn */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Khi load xong sẽ áp dụng class này để ẩn đi */
+#preloader.fade-out {
+    opacity: 0;
+    visibility: hidden;
+}
+
+
+/* ============================================================ */
+/* CẬP NHẬT CSS CHO PRELOADER (Căn chỉnh V đứng yên)         */
+/* ============================================================ */
+
+/* Cập nhật class spinner: Chỉ còn chứa hiệu ứng xoay và vòng tròn */
+.spinner {
+    position: relative; /* Giữ position: relative */
+    width: 110px;        /* Giữ kích thước ban đầu */
+    height: 110px;       /* Giữ kích thước ban đầu */
+    margin: 0 auto;       /* Bỏ margin-bottom lớn ban đầu */
+    /* Giữ nguyên các border-color và radius khác */
+    border-radius: 50%;
+    animation: spin 1.4s cubic-bezier(0.42, 0, 0.58, 1) infinite;
+    /* Không cần display: flex; justify-content: center; align-items: center; */
+}
+
+/* Thêm class mới cho nhóm ở tâm */
+.loader-center-group {
+    position: relative;   /* Cho phép con cái định vị tuyệt đối */
+    width: 110px;
+    height: 110px;
+    margin: 0 auto 35px; /* Giữ margin-bottom ở đây */
+    display: flex;       /* Dùng flex để căn chỉnh *tâm* của group */
+    justify-content: center;
+    align-items: center;
+}
+
+/* Thêm container chứa chữ V để căn chỉnh */
+.loader-letter-container {
+    position: absolute;   /* Nằm tuyệt đối trên group cha */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;       /* Flex để căn chỉnh chữ V vào tâm */
+    justify-content: center;
+    align-items: center;
+}
+
+/* Cập nhật class loader-letter để nó đứng yên */
+.loader-letter {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 36px;
+    font-weight: 700;
+    background: linear-gradient(135deg, #00cec9, #a55eea);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+
+}
+
+/* ============================================================ */
+/* ÉP CÁC CHỮ TRÊN NAVBAR NẰM TRÊN 1 DÒNG DUY NHẤT             */
+/* ============================================================ */
+
+/* 1. Ngăn không cho chữ tự động xuống dòng */
+.navbar-nav .nav-item .nav-link,
+.navbar-nav .nav-item {
+    white-space: nowrap !important; /* Tuyệt đối không cho xuống dòng */
+}
+
+/* 2. Thu nhỏ khoảng cách giữa các mục một chút để vừa màn hình */
+.navbar-nav .nav-link {
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+    font-size: 0.95rem !important; /* Hạ size chữ xuống một xíu nếu menu của bạn quá dài */
+}
+
+/* 3. Tăng không gian hiển thị cho toàn bộ cụm menu */
+.navbar-collapse {
+    flex-grow: 1;
+    justify-content: flex-end; /* Đẩy các menu sang bên phải một cách ngăn nắp */
+}

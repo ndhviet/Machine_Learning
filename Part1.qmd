@@ -1,0 +1,129 @@
+---
+title: "Partie 1 Housing Prices"
+author: "NGUYEN Duc Hoang Viet"
+number-sections: true 
+code-fold: false
+execute:
+  python: /Users/nguyenduchoangviet/Documents/github/Machine_Learning/.venv/bin/python
+  warning: false
+  message: false
+---
+
+# Introduction 
+
+Dans cette partie, nous allons prédire le prix des maisons selon le scénario suivant : une maison avec 1 chambre coûte 100k (100 000 USD), et le prix augmente de 50k pour chaque chambre supplémentaire.
+
+Pour créer les données d'entraînement (features et targets), nous allons utiliser numpy afin de créer un tenseur à une dimension contenant le nombre de chambres, ainsi qu'un autre tenseur à une dimension contenant le prix correspondant (exprimé en centaines de milliers de dollars, par exemple 1.0 signifie 100k). Dans ce cas, le nombre de chambres sera les features, que le réseau de neurones essaiera d'associer au target, à savoir le prix des maisons.
+
+Ces deux tenseurs (ou tableaux numpy) auront 6 éléments, correspondant aux valeurs (nombre de chambres et prix en centaines de milliers de dollars) pour des maisons ayant de 1 à 6 chambres.
+
+$$
+\text{prix} = a \times (\text{nombre de chambres}) + b
+$$
+
+# Import les modules 
+
+```{python}
+import numpy as np
+import matplotlib.pyplot as plt
+import tensorflow as tf
+```
+
+# Fonction create_training_data
+
+```{python}
+def create_training_data():
+    n_bedrooms = np.array([1.0, 2.0, 3.0, 4.0, 5.0, 6.0] ,dtype= float)
+    price_in_hundreds_of_thousands = np.array([1.0, 1.5, 2.0, 2.5, 3.0, 3.5], dtype=float)
+    return n_bedrooms, price_in_hundreds_of_thousands
+```
+
+```{python}
+features, targets = create_training_data()
+
+print(f"Features have shape: {features.shape}")
+print(f"Targets have shape: {targets.shape}")
+```
+
+# Fonction define_and_compile_model
+
+```{python}
+def define_and_compile_model():
+    model = tf.keras.Sequential([
+		   tf.keras.Input(shape=[1]),
+	     tf.keras.layers.Dense(units=1)])
+    model.compile(optimizer='sgd', loss='mean_squared_error')
+    return model
+```
+
+```{python}
+untrained_model = define_and_compile_model()
+untrained_model.summary()
+```
+
+# Fonction train_model
+
+```{python}
+def train_model():
+    # Define feature and target tensors with the values for houses with 1 up to 6 bedrooms
+    n_bedrooms , price_in_hundreds_of_thousands = create_training_data()
+    # Define a compiled (but untrained) model
+    model = define_and_compile_model()
+    # Train the model for 500 epochs by feeding the training data
+    model.fit(n_bedrooms, price_in_hundreds_of_thousands, epochs =500 )
+    return model
+```
+
+```{python}
+# Trained model
+trained_model = train_model()
+```
+
+```{python}
+new_n_bedrooms = np.array([7.0])
+predicted_price = trained_model.predict(new_n_bedrooms, verbose=False).item()
+print(f"Your model predicted a price of {predicted_price:.2f} hundreds of thousands of dollars for a {int(new_n_bedrooms.item())} bedrooms house")
+```
+
+# Resultats 
+
+## Relation lineaire 
+
+```{python}
+n_bedrooms = np.array([1.0, 2.0, 3.0, 4.0, 5.0, 6.0], dtype=float)
+price_in_hundreds_of_thousands = np.array([1.0, 1.5, 2.0, 2.5, 3.0, 3.5], dtype=float)
+```
+
+Une **relation linéaire** signifie que lorsque une grandeur augmente d'une quantité fixe, l'autre grandeur augmente également d'une quantité fixe correspondante. Autrement dit, si on trace les points sur un graphique, ils sont alignés sur une droite.
+
+En reprenant nos données :
+
+| Nombre de chambres | Prix (centaines de milliers $) |
+|---|---|
+| 1 | 1.0 |
+| 2 | 1.5 |
+| 3 | 2.0 |
+| 4 | 2.5 |
+| 5 | 3.0 |
+| 6 | 3.5 |
+
+À chaque fois que le nombre de chambres **augmente de 1**, le prix augmente toujours **exactement de 0.5** — cette augmentation est constante (1→2 : +0.5, 2→3 : +0.5, 3→4 : +0.5, etc.). C'est précisément la caractéristique d'une relation linéaire.
+
+Sous forme d'équation, cela correspond à la formule bien connue d'une droite :
+
+$$
+\text{prix} = a \times (\text{nombre de chambres}) + b
+$$
+
+Avec nos données : $\text{prix} = 0.5 \times (\text{nombre de chambres}) + 0.5$
+
+Si on trace les points $(1, 1.0)$, $(2, 1.5)$, $(3, 2.0)$, etc. sur un graphique, ils sont **parfaitement alignés sur une droite** — d'où le terme "linéaire".
+
+## Explication  
+
+Chaque valeur de n_bedrooms correspond à une valeur de price_in_hundreds_of_thousands : une maison de 1 chambre coûte 1.0 (100k), une maison de 2 chambres coûte 1.5 (150k), et ainsi de suite jusqu'à 6 chambres pour un prix de 3.5 (350k). On observe que le prix suit une relation linéaire : il augmente de 0.5 (50k) à chaque chambre supplémentaire.
+
+Une fois le modèle entraîné sur ces données, on peut lui demander de prédire le prix d'une maison avec un nombre de chambres qu'il n'a jamais vu pendant l'entraînement, par exemple 7 chambres. Le modèle prédit alors un prix de 4.03 centaines de milliers de dollars (soit environ 403k) pour une maison de 7 chambres.
+
+Ce résultat est cohérent avec la relation linéaire observée dans les données : en suivant la tendance (1.0 + 0.5 × (7 - 1) = 4.0), on s'attendrait à un prix théorique de 4.0. La légère différence (4.03 au lieu de 4.0) s'explique par le fait que le modèle a appris cette relation de façon approximative à partir des données, plutôt que de calculer la formule exacte.
+

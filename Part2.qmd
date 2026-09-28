@@ -1,0 +1,431 @@
+---
+title: "Partie 2 Dataset FMINISTs"
+author: "NGUYEN Duc Hoang Viet"
+number-sections: true 
+code-fold: false
+execute:
+  python: /Users/nguyenduchoangviet/Documents/github/Machine_Learning/.venv/bin/python
+  warning: false
+  message: false
+---
+
+# Introduction
+
+Dans cette partie, nous allons utiliser le dataset **Fashion MNIST** pour prédire des vêtements grâce à un modèle de classification. Il existe un autre dataset similaire appelé **MNIST**, qui contient des images d'écriture manuscrite — les chiffres de 0 à 9.
+
+Dans cet exercice, on va coder un classificateur pour le dataset MNIST, qui s'entraîne jusqu'à atteindre une précision (*accuracy*) de 98%, et s'arrête automatiquement dès que ce seuil est atteint. Dans les cours précédents, cette technique avait été appliquée à la perte (*loss*), mais ici on va l'utiliser avec l'accuracy à la place.
+
+Le dataset Fashion MNIST est une collection d'images en niveaux de gris de 28x28 pixels représentant des vêtements. Chaque image est associée à un label, comme indiqué dans le tableau ci-dessous.
+
+| Label | Description |
+|-------|-------------|
+| 0     | T-shirt/top |
+| 1     | Trouser     |
+| 2     | Pullover    |
+| 3     | Dress       |
+| 4     | Coat        |
+| 5     | Sandal      |
+| 6     | Shirt       |
+| 7     | Sneaker     |
+| 8     | Bag         |
+| 9     | Ankle boot  |
+
+Ce dataset est directement disponible dans l'API `tf.keras.datasets`, et on le charge de la manière suivante :
+
+# Import les modules et le dataset
+
+```{python}
+import numpy as np
+import matplotlib.pyplot as plt
+import tensorflow as tf
+```
+
+```{python}
+fmnist = tf.keras.datasets.fashion_mnist
+```
+
+```{python}
+#| output: false
+# Charger les ensembles d'entraînement et de test du dataset Fashion MNIST
+(training_images, training_labels), (test_images, test_labels) = fmnist.load_data()
+```
+
+```{python}
+print("Training images:", training_images.shape)
+print("Training labels:", training_labels.shape)
+print("Test images:", test_images.shape)
+print("Test labels:", test_labels.shape)
+```
+
+```{python}
+#Visualiser un exemple
+index = 0 # mettre une valeur entre 0 et 59999 ici
+
+# Définir le nombre de caractères par ligne lors de l'affichage
+np.set_printoptions(linewidth=320)
+
+# Afficher le label et l'image
+print(f'LABEL: {training_labels[index]}')
+print(f'\nIMAGE PIXEL ARRAY:\n\n{training_images[index]}\n\n')
+
+# Visualiser l'image en utilisant la colormap par défaut (viridis)
+plt.imshow(training_images[index])
+plt.colorbar()
+plt.show()
+```
+
+# Normaliser les données
+
+On voit que toutes les valeurs dans le tableau de nombres sont comprises entre 0 et 255. Lorsqu'on entraîne un réseau de neurones, en particulier dans le traitement d'images, il apprendra généralement mieux, pour diverses raisons, si toutes les valeurs sont mises à l'échelle entre 0 et 1.
+
+```{python}
+training_images  = training_images / 255.0
+test_images = test_images / 255.0
+# Check the range
+print("Pixel range de training images:", training_images.min(), "to", training_images.max())
+print("Pixel range de test images:", test_images.min(), "to", test_images.max())
+```
+
+# Model de la classification
+
+## Intitale
+
+```{python}
+model = tf.keras.models.Sequential([
+    tf.keras.Input(shape=(28,28)),
+    tf.keras.layers.Flatten(),
+    tf.keras.layers.Dense(128, activation=tf.nn.relu),
+    tf.keras.layers.Dense(10, activation=tf.nn.softmax)
+])
+```
+
+[Sequential](https://keras.io/api/models/sequential/) : définit une séquence de couches (*layers*) dans le réseau de neurones.
+
+[Flatten](https://keras.io/api/layers/reshaping_layers/flatten/) : on se rappelle que plus tôt, nos images étaient une matrice de pixels 28x28 lorsqu'on les affichait. `Flatten` prend simplement ce carré et le transforme en un tableau à une dimension.
+
+[Dense](https://keras.io/api/layers/core_layers/dense/) : ajoute une couche de neurones.
+
+Chaque couche de neurones a besoin d'une [fonction d'activation](https://keras.io/api/layers/activations/) pour lui indiquer quoi faire. Il existe beaucoup d'options, mais pour l'instant on va utiliser seulement celles-ci :
+
+[ReLU](https://keras.io/api/layers/activations/#relu-function) signifie concrètement :
+
+$$
+f(x) = 
+\begin{cases} 
+x & \text{si } x > 0 \\
+0 & \text{sinon}
+\end{cases}
+$$
+
+Autrement dit, elle ne transmet à la couche suivante du réseau que les valeurs supérieures à 0.
+
+[Softmax](https://keras.io/api/layers/activations/#softmax-function) prend une liste de valeurs et les met à l'échelle de sorte que la somme de tous les éléments soit égale à 1. Lorsqu'elle est appliquée aux sorties du modèle, on peut interpréter les valeurs mises à l'échelle comme la probabilité de chaque classe. Par exemple, dans notre modèle de classification qui possède 10 unités dans la couche dense de sortie, si la valeur la plus élevée se trouve à `index = 4`, cela signifie que le modèle est le plus confiant que l'image de vêtement en entrée est un manteau (*coat*). Si elle se trouve à `index = 5`, alors il s'agit d'une sandale, et ainsi de suite. Voir le court bloc de code ci-dessous qui illustre ces concepts. On peut aussi regarder ce [cours](https://www.youtube.com/watch?v=LLux1SW--oM&ab_channel=DeepLearningAI) pour en savoir plus sur la fonction Softmax et sur la façon dont les valeurs sont calculées.
+
+## Compile
+
+```{python}
+model.compile(optimizer = tf.optimizers.Adam(),
+              loss = 'sparse_categorical_crossentropy',
+              metrics=['accuracy'])
+model.fit(training_images, training_labels, epochs=5, verbose=2)
+```
+
+## Evaluation
+
+```{python}
+model.evaluate(test_images, test_labels)
+```
+
+```{python}
+classifications = model.predict(test_images)
+
+print(classifications[0])
+print(test_labels[0])
+```
+
+Le modèle est « confiant » à 99,06 % qu'il s'agit d'une **Ankle boot** (index 9) — et le label réel est bien `9`. Il s'agit d'une prédiction extrêmement précise et confiante.
+
+**« Pourquoi l'output est-il une liste de nombres, et que représentent ces nombres ? »**
+
+→ Parce que le modèle ne répond pas directement « c'est une Ankle boot », mais renvoie plutôt le degré de confiance (la probabilité) pour les 10 possibilités à la fois. Dans ce cas précis, le modèle est presque « absolument certain » (99,06 %) qu'il s'agit de la classe numéro 9 (**Ankle boot**), et exclut quasiment toutes les autres possibilités (probabilités proches de 0).
+
+```{python}
+sum2 = classifications[0].sum()
+print(f'sum of outputs: {sum2}')
+
+prediction2 = np.argmax(classifications[0])
+print(f'class with highest probability: {prediction2}')
+```
+
+## Tester une prédiction
+
+On va maintenant tester le modèle sur une image du jeu de test, et visualiser le résultat.
+
+```{python}
+# Liste des noms de classes correspondant aux labels (0 à 9)
+class_names = ['T-shirt/top', 'Trouser', 'Pullover', 'Dress', 'Coat',
+               'Sandal', 'Shirt', 'Sneaker', 'Bag', 'Ankle boot']
+
+# Choisir un index à tester (entre 0 et 9999, car c'est le jeu de test)
+index = 0
+
+# Faire la prédiction pour cette image
+predictions = model.predict(test_images)
+predicted_label = np.argmax(predictions[index])
+true_label = test_labels[index]
+
+# Afficher l'image
+plt.figure(figsize=(4,4))
+plt.imshow(test_images[index], cmap='gray')
+plt.axis('off')
+
+# Titre : prédiction vs réalité, en vert si correct, en rouge si faux
+color = 'green' if predicted_label == true_label else 'red'
+plt.title(f"Prédit: {class_names[predicted_label]}\nRéel: {class_names[true_label]}",
+          color=color)
+plt.show()
+```
+
+# Question
+
+## Layer avec 512 neurons.
+
+```{python}
+fmnist = tf.keras.datasets.fashion_mnist
+
+(training_images, training_labels), (test_images, test_labels) = fmnist.load_data()
+
+training_images = training_images / 255.0
+test_images = test_images / 255.0
+
+model = tf.keras.models.Sequential([
+    tf.keras.Input(shape=(28,28)),
+    tf.keras.layers.Flatten(),
+    tf.keras.layers.Dense(512, activation=tf.nn.relu), 
+    tf.keras.layers.Dense(10, activation=tf.nn.softmax)
+])
+
+model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
+
+print("Training:\n")
+model.fit(training_images, training_labels, epochs=5, verbose=2)
+
+print("\nEvaluating on test set:\n")
+model.evaluate(test_images, test_labels)
+
+print("\nPredicting using test set:\n")
+predictions = model.predict(test_images)
+
+print(f"\nTrue class for first image on test set: {test_labels[0]}\nProbability of each class:\n{predictions[0]}")
+```
+
+**Comparaison des résultats d'entraînement (Training)**
+
+| | 128 neurones (avant) | 512 neurones (maintenant) |
+|---|---|---|
+| Epoch 5 - Training accuracy | 0.8923 (89.23%) | 0.8948 (89.48%) |
+| Epoch 5 - Training loss | 0.2941 | 0.2830 |
+| Temps par epoch | ~11s | ~10s |
+
+→ Légère amélioration sur les données d'entraînement : l'accuracy augmente d'environ 0.5%, et la loss diminue légèrement.
+
+**Comparaison des résultats sur le jeu de test (Evaluation)**
+
+| | 128 neurones (avant) | 512 neurones (maintenant) |
+|---|---|---|
+| Test accuracy | 0.8755 (87.55%) | 0.8743 (87.43%) |
+| Test loss | 0.3474 | 0.3612 |
+
+→ C'est ici le point le plus intéressant : bien que l'accuracy sur les données d'entraînement augmente, l'accuracy sur le jeu de test diminue légèrement (de 87.1% à 86.59%) !
+
+**Pourquoi observe-t-on cela ? — C'est le signe d'un Overfitting (surapprentissage)**
+
+En augmentant le nombre de neurones de 128 à 512, le modèle dispose de davantage de paramètres pour « mémoriser » les données d'entraînement — il apprend de façon trop précise sur le jeu de training (accuracy de 89.6%), mais lorsqu'il rencontre de nouvelles données qu'il n'a jamais vues (le jeu de test), sa capacité de généralisation devient légèrement moins bonne (l'accuracy diminue à 86.59%).
+
+Augmenter le nombre de neurones (ou ajouter des couches) donne au modèle plus de capacité pour apprendre des motifs complexes dans les données, ce qui peut parfois améliorer les performances. Cependant, cela comporte aussi un risque : plus un modèle est complexe, plus il a tendance à mémoriser les données d'entraînement au lieu d'apprendre une règle générale — c'est le phénomène de **surapprentissage (overfitting)**.
+
+Cela illustre bien qu'ajouter des couches ou des neurones n'est pas toujours synonyme de meilleure performance : il s'agit toujours d'un compromis entre la capacité d'apprentissage du modèle et sa capacité à généraliser.
+
+## Enlever Flatten() layer
+
+On va rencontrer une erreur liée à la *shape* (forme) des données. Règle importante : la première couche du réseau de neurones doit avoir une *shape* correspondant aux données d'entrée. Comme nos images ont une taille de 28x28 pixels (2 dimensions), si on n'utilise pas `Flatten()` pour les transformer en un tableau à une dimension (784x1), le réseau de neurones ne saura pas comment traiter ces données à 2 dimensions → cela provoque une erreur.
+
+`Flatten()` permet de ne pas avoir à écrire soi-même le code pour transformer la forme des données — elle « aplatit » automatiquement la matrice 28x28 en une série de 784 nombres dès que les données sont transmises au modèle.
+
+## Final (output) layers
+
+On va rencontrer une erreur dès que le modèle rencontre une valeur qu'il n'attendait pas. Autre règle importante : le nombre de neurones dans la dernière couche doit correspondre au nombre de classes que l'on cherche à classifier. Dans notre cas, il s'agit des vêtements (10 catégories, de 0 à 9), il doit donc y avoir exactement **10 neurones** dans la couche finale.
+
+```{python}
+model = tf.keras.models.Sequential([
+    tf.keras.Input(shape=(28,28)),
+    tf.keras.layers.Flatten(),
+    tf.keras.layers.Dense(128, activation=tf.nn.relu),
+    tf.keras.layers.Dense(10, activation=tf.nn.softmax)  # ici units = 10
+])
+```
+
+## Ajouter le layer 
+
+On va examiner l'effet de l'ajout de couches supplémentaires dans le réseau. Que se passe-t-il si on ajoute une autre couche entre celle avec 512 neurones et la couche finale avec 10 neurones ?
+
+**Réponse**
+
+On n'observe pas d'impact significatif — car il s'agit de données relativement simples. Pour des données beaucoup plus complexes (par exemple des images en couleur à classifier comme des fleurs, qu'on verra dans la prochaine leçon), des couches supplémentaires sont souvent nécessaires.
+
+## Changer le numero des épochs
+
+On va essayer avec 15 epochs : on obtiendra probablement un modèle avec une loss bien meilleure que celui entraîné sur 5 epochs.
+
+* On va essayer avec 30 epochs : on verra peut-être la valeur de la loss diminuer plus lentement, et parfois même augmenter. On verra aussi probablement que les résultats de `model.evaluate()` ne s'améliorent pas beaucoup, et peuvent même être légèrement moins bons.
+
+Il s'agit d'un effet secondaire de ce qu'on appelle le **surapprentissage** (*overfitting*), un phénomène qu'on étudiera plus tard et auquel il faut faire attention lors de l'entraînement d'un réseau de neurones. Cela ne sert à rien de perdre du temps à entraîner le modèle si la loss ne s'améliore plus, n'est-ce pas ! :)
+
+## Si non normalisation les données
+
+```{python}
+fmnist = tf.keras.datasets.fashion_mnist
+
+(training_images, training_labels), (test_images, test_labels) = fmnist.load_data()
+
+model = tf.keras.models.Sequential([
+    tf.keras.Input(shape=(28,28)),
+    tf.keras.layers.Flatten(),
+    tf.keras.layers.Dense(128, activation=tf.nn.relu), 
+    tf.keras.layers.Dense(10, activation=tf.nn.softmax)
+])
+
+model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
+
+print("Training:\n")
+model.fit(training_images, training_labels, epochs=5, verbose=2)
+
+print("\nEvaluating on test set:\n")
+model.evaluate(test_images, test_labels)
+
+print("\nPredicting using test set:\n")
+predictions = model.predict(test_images)
+
+print(f"\nTrue class for first image on test set: {test_labels[0]}\nProbability of each class:\n{predictions[0]}")
+```
+
+**Comparaison des résultats**
+
+|                                        | Avec normalisation | Sans normalisation |
+| -------------------------------------- | ------------------ | ------------------ |
+| Valeurs des pixels                     | `0 → 1`            | `0 → 255`          |
+| Accuracy d'entraînement après 5 epochs | **89,14 %**        | **81,81 %**        |
+| Accuracy sur le test                   | **87,04 %**        | **82,88 %**        |
+| Loss sur le test                       | **0,3597**         | **0,5090**         |
+| Accuracy à l'epoch 1                   | **82,37 %**        | **66,73 %**        |
+| Loss à l'epoch 1                       | **0,4999**         | **3,0243**         |
+
+**Observation**
+
+Un point particulièrement intéressant est la différence dès la première epoch :
+
+```text
+Avec normalisation :
+Epoch 1 → loss = 0,4999 ; accuracy = 82,37 %
+
+Sans normalisation :
+Epoch 1 → loss = 3,0243 ; accuracy = 66,73 %
+```
+
+Le modèle peut toujours être entraîné **sans normalisation**, mais il apprend moins efficacement au début.
+
+** Pourquoi obtient-on des résultats différents ? **
+
+Dans le dataset **Fashion-MNIST**, les valeurs des pixels sont initialement comprises entre `0` et `255`.
+
+Lorsque nous normalisons les données avec :
+
+```{python}
+training_images = training_images / 255.0
+test_images = test_images / 255.0
+```
+
+les valeurs des pixels sont transformées pour être comprises entre `0` et `1`.
+
+Par exemple :
+
+```text
+pixel = 0     → 0,0
+pixel = 128   → 0,502
+pixel = 255   → 1,0
+```
+
+La normalisation permet donc de fournir au réseau de neurones des valeurs d'entrée plus petites et homogènes. Cela facilite l'optimisation des poids et permet généralement un apprentissage plus stable et plus efficace.
+
+Sans normalisation, le réseau reçoit directement des valeurs comprises entre `0` et `255`. Avec le même modèle et le même optimiseur, l'échelle des valeurs d'entrée est beaucoup plus grande, ce qui modifie la manière dont les poids sont mis à jour pendant l'entraînement.
+
+Dans mon expérience, cela conduit à une accuracy plus faible après 5 epochs :
+
+```text
+Avec normalisation    → 87,04 % sur le test
+Sans normalisation    → 82,88 % sur le test
+```
+
+**Comparaison des prédictions**
+
+Pour la première image du jeu de test, la vraie classe est :
+
+```text
+True label : 9
+```
+
+Avec normalisation :
+
+```text
+Classe 9 → 89,73 %
+```
+
+Sans normalisation :
+
+```text
+Classe 9 → 85,78 %
+```
+
+Dans les deux cas, le modèle prédit correctement la **classe 9**.
+
+Cependant, dans cette expérience, le modèle entraîné avec des données normalisées donne une probabilité plus élevée pour la bonne classe :
+
+```text
+89,73 % contre 85,78 %
+```
+
+**Conclusion**
+
+La normalisation des données n'est pas obligatoire pour que le modèle puisse apprendre, comme le montre l'expérience sans normalisation. Cependant, dans cette expérience sur **Fashion-MNIST**, la normalisation des pixels de `0–255` vers `0–1` permet d'obtenir un apprentissage plus efficace et une meilleure accuracy sur le jeu de test après 5 epochs.
+
+# Callbacks
+
+On peut constater qu'après plusieurs epochs, l'accuracy atteint un niveau élevé et varie peu, tandis que la loss continue progressivement à diminuer. Dans ce cas, nous pouvons utiliser une fonction de **callback**, comme `EarlyStopping`, pour arrêter automatiquement l'entraînement lorsque le modèle n'améliore plus suffisamment ses performances. Cela permet d'éviter des epochs inutiles et de **réduire le temps d'entraînement**.
+
+
+```{python}
+class myCallback(tf.keras.callbacks.Callback):
+    def on_epoch_end(self, epoch, logs={}):
+        if(logs.get('accuracy') >= 0.89): 
+            print("\nReached 89% accuracy so cancelling training!")
+            self.model.stop_training = True
+
+callbacks = myCallback()
+
+fmnist = tf.keras.datasets.fashion_mnist
+(training_images, training_labels), (test_images, test_labels) = fmnist.load_data()
+
+training_images=training_images / 255.0
+test_images=test_images / 255.0
+
+model = tf.keras.models.Sequential([
+    tf.keras.Input(shape=(28,28)),
+    tf.keras.layers.Flatten(),
+    tf.keras.layers.Dense(512, activation=tf.nn.relu),
+    tf.keras.layers.Dense(10, activation=tf.nn.softmax)
+])
+
+model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
+model.fit(training_images, training_labels, epochs=5, callbacks=[callbacks], verbose=2)
+```
+
