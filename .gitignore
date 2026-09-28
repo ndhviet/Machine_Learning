@@ -9,6 +9,7 @@ __pycache__/
 
 # Quarto build artifacts
 *_files/
+!docs/**/*_files/
 *_cache/
 
 # R
