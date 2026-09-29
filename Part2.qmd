@@ -334,7 +334,7 @@ Epoch 1 → loss = 3,0243 ; accuracy = 66,73 %
 
 Le modèle peut toujours être entraîné **sans normalisation**, mais il apprend moins efficacement au début.
 
-** Pourquoi obtient-on des résultats différents ? **
+**Pourquoi obtient-on des résultats différents ? **
 
 Dans le dataset **Fashion-MNIST**, les valeurs des pixels sont initialement comprises entre `0` et `255`.
 

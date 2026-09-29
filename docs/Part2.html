@@ -319,19 +319,19 @@ window.Quarto = {
 </section>
 <section id="import-les-modules-et-le-dataset" class="level1" data-number="2">
 <h1 data-number="2"><span class="header-section-number">2</span> Import les modules et le dataset</h1>
-<div id="4ac794d6" class="cell" data-execution_count="1">
+<div id="e1a53592" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> tensorflow <span class="im">as</span> tf</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="4142dcb6" class="cell" data-execution_count="2">
+<div id="4369b177" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>fmnist <span class="op">=</span> tf.keras.datasets.fashion_mnist</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="0c22880f" class="cell" data-execution_count="3">
+<div id="aebb3d53" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Charger les ensembles d'entraînement et de test du dataset Fashion MNIST</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>(training_images, training_labels), (test_images, test_labels) <span class="op">=</span> fmnist.load_data()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="ff473ca1" class="cell" data-execution_count="4">
+<div id="0e7b25e5" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Training images:"</span>, training_images.shape)</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Training labels:"</span>, training_labels.shape)</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Test images:"</span>, test_images.shape)</span>
@@ -343,7 +343,7 @@ Test images: (10000, 28, 28)
 Test labels: (10000,)</code></pre>
 </div>
 </div>
-<div id="cb278d46" class="cell" data-execution_count="5">
+<div id="2b445430" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Visualiser un exemple</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>index <span class="op">=</span> <span class="dv">0</span> <span class="co"># mettre une valeur entre 0 et 59999 ici</span></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -406,7 +406,7 @@ IMAGE PIXEL ARRAY:
 <section id="normaliser-les-données" class="level1" data-number="3">
 <h1 data-number="3"><span class="header-section-number">3</span> Normaliser les données</h1>
 <p>On voit que toutes les valeurs dans le tableau de nombres sont comprises entre 0 et 255. Lorsqu’on entraîne un réseau de neurones, en particulier dans le traitement d’images, il apprendra généralement mieux, pour diverses raisons, si toutes les valeurs sont mises à l’échelle entre 0 et 1.</p>
-<div id="8648414a" class="cell" data-execution_count="6">
+<div id="dceb0fcf" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>training_images  <span class="op">=</span> training_images <span class="op">/</span> <span class="fl">255.0</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>test_images <span class="op">=</span> test_images <span class="op">/</span> <span class="fl">255.0</span></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Check the range</span></span>
@@ -422,7 +422,7 @@ Pixel range de test images: 0.0 to 1.0</code></pre>
 <h1 data-number="4"><span class="header-section-number">4</span> Model de la classification</h1>
 <section id="intitale" class="level2" data-number="4.1">
 <h2 data-number="4.1" class="anchored" data-anchor-id="intitale"><span class="header-section-number">4.1</span> Intitale</h2>
-<div id="c4d89084" class="cell" data-execution_count="7">
+<div id="5595f447" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> tf.keras.models.Sequential([</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    tf.keras.Input(shape<span class="op">=</span>(<span class="dv">28</span>,<span class="dv">28</span>)),</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    tf.keras.layers.Flatten(),</span>
@@ -447,81 +447,76 @@ x &amp; \text{si } x &gt; 0 \\
 </section>
 <section id="compile" class="level2" data-number="4.2">
 <h2 data-number="4.2" class="anchored" data-anchor-id="compile"><span class="header-section-number">4.2</span> Compile</h2>
-<div id="5371983e" class="cell" data-execution_count="8">
+<div id="f9c07278" class="cell" data-execution_count="8">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>model.<span class="bu">compile</span>(optimizer <span class="op">=</span> tf.optimizers.Adam(),</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>              loss <span class="op">=</span> <span class="st">'sparse_categorical_crossentropy'</span>,</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>              metrics<span class="op">=</span>[<span class="st">'accuracy'</span>])</span>
 <span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>model.fit(training_images, training_labels, epochs<span class="op">=</span><span class="dv">5</span>, verbose<span class="op">=</span><span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Epoch 1/5
-1875/1875 - 3s - loss: 0.4970 - accuracy: 0.8244 - 3s/epoch - 1ms/step
+1875/1875 - 3s - loss: 0.4941 - accuracy: 0.8263 - 3s/epoch - 2ms/step
 Epoch 2/5
-1875/1875 - 3s - loss: 0.3706 - accuracy: 0.8663 - 3s/epoch - 2ms/step
+1875/1875 - 2s - loss: 0.3752 - accuracy: 0.8643 - 2s/epoch - 1ms/step
 Epoch 3/5
-1875/1875 - 2s - loss: 0.3327 - accuracy: 0.8793 - 2s/epoch - 1ms/step
+1875/1875 - 3s - loss: 0.3396 - accuracy: 0.8748 - 3s/epoch - 1ms/step
 Epoch 4/5
-1875/1875 - 3s - loss: 0.3101 - accuracy: 0.8860 - 3s/epoch - 2ms/step
+1875/1875 - 2s - loss: 0.3128 - accuracy: 0.8855 - 2s/epoch - 1ms/step
 Epoch 5/5
-1875/1875 - 2s - loss: 0.2916 - accuracy: 0.8931 - 2s/epoch - 1ms/step</code></pre>
+1875/1875 - 2s - loss: 0.2971 - accuracy: 0.8901 - 2s/epoch - 1ms/step</code></pre>
 </div>
-<div class="cell-output cell-output-display" data-execution_count="59">
-<pre><code>&lt;keras.src.callbacks.History at 0x140c04550&gt;</code></pre>
+<div class="cell-output cell-output-display" data-execution_count="8">
+<pre><code>&lt;keras.src.callbacks.History at 0x136682410&gt;</code></pre>
 </div>
 </div>
 </section>
 <section id="evaluation" class="level2" data-number="4.3">
 <h2 data-number="4.3" class="anchored" data-anchor-id="evaluation"><span class="header-section-number">4.3</span> Evaluation</h2>
-<div id="b0689642" class="cell" data-execution_count="9">
+<div id="e96bbc5e" class="cell" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>model.evaluate(test_images, test_labels)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
-  1/313 [..............................] - ETA: 32s - loss: 0.2647 - accuracy: 0.9062
- 43/313 [===&gt;..........................] - ETA: 0s - loss: 0.3368 - accuracy: 0.8801 
- 79/313 [======&gt;.......................] - ETA: 0s - loss: 0.3204 - accuracy: 0.8837
-115/313 [==========&gt;...................] - ETA: 0s - loss: 0.3423 - accuracy: 0.8761
-153/313 [=============&gt;................] - ETA: 0s - loss: 0.3471 - accuracy: 0.8750
-189/313 [=================&gt;............] - ETA: 0s - loss: 0.3578 - accuracy: 0.8717
-221/313 [====================&gt;.........] - ETA: 0s - loss: 0.3554 - accuracy: 0.8722
-254/313 [=======================&gt;......] - ETA: 0s - loss: 0.3476 - accuracy: 0.8746
-286/313 [==========================&gt;...] - ETA: 0s - loss: 0.3487 - accuracy: 0.8748
-313/313 [==============================] - 1s 1ms/step - loss: 0.3476 - accuracy: 0.8752</code></pre>
+  1/313 [..............................] - ETA: 45s - loss: 0.4539 - accuracy: 0.8750
+ 54/313 [====&gt;.........................] - ETA: 0s - loss: 0.3258 - accuracy: 0.8831 
+106/313 [=========&gt;....................] - ETA: 0s - loss: 0.3493 - accuracy: 0.8759
+159/313 [==============&gt;...............] - ETA: 0s - loss: 0.3538 - accuracy: 0.8728
+215/313 [===================&gt;..........] - ETA: 0s - loss: 0.3600 - accuracy: 0.8715
+261/313 [========================&gt;.....] - ETA: 0s - loss: 0.3504 - accuracy: 0.8748
+313/313 [==============================] - ETA: 0s - loss: 0.3480 - accuracy: 0.8742
+313/313 [==============================] - 0s 978us/step - loss: 0.3480 - accuracy: 0.8742</code></pre>
 </div>
-<div class="cell-output cell-output-display" data-execution_count="60">
-<pre><code>[0.3476369082927704, 0.8751999735832214]</code></pre>
+<div class="cell-output cell-output-display" data-execution_count="9">
+<pre><code>[0.34799978137016296, 0.8741999864578247]</code></pre>
 </div>
 </div>
-<div id="432f898e" class="cell" data-execution_count="10">
+<div id="8b11e47f" class="cell" data-execution_count="10">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>classifications <span class="op">=</span> model.predict(test_images)</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(classifications[<span class="dv">0</span>])</span>
 <span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(test_labels[<span class="dv">0</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
-  1/313 [..............................] - ETA: 18s
- 37/313 [==&gt;...........................] - ETA: 0s 
- 74/313 [======&gt;.......................] - ETA: 0s
-111/313 [=========&gt;....................] - ETA: 0s
-142/313 [============&gt;.................] - ETA: 0s
-180/313 [================&gt;.............] - ETA: 0s
-214/313 [===================&gt;..........] - ETA: 0s
-252/313 [=======================&gt;......] - ETA: 0s
-286/313 [==========================&gt;...] - ETA: 0s
-313/313 [==============================] - 1s 1ms/step
-[1.9173158e-06 2.7618775e-08 1.8224029e-05 3.2494213e-06 1.9711292e-06 6.8348297e-03 5.7086850e-06 1.5254796e-01 1.0979434e-04 8.4047639e-01]
+  1/313 [..............................] - ETA: 20s
+ 60/313 [====&gt;.........................] - ETA: 0s 
+123/313 [==========&gt;...................] - ETA: 0s
+187/313 [================&gt;.............] - ETA: 0s
+251/313 [=======================&gt;......] - ETA: 0s
+311/313 [============================&gt;.] - ETA: 0s
+313/313 [==============================] - 0s 817us/step
+[7.2605202e-05 4.3896478e-07 1.1180495e-05 1.1789718e-06 7.8177363e-06 1.3067867e-01 1.7058196e-04 2.2667758e-02 6.1550370e-04 8.4577429e-01]
 9</code></pre>
 </div>
 </div>
 <p>Le modèle est « confiant » à 99,06 % qu’il s’agit d’une <strong>Ankle boot</strong> (index 9) — et le label réel est bien <code>9</code>. Il s’agit d’une prédiction extrêmement précise et confiante.</p>
 <p><strong>« Pourquoi l’output est-il une liste de nombres, et que représentent ces nombres ? »</strong></p>
 <p>→ Parce que le modèle ne répond pas directement « c’est une Ankle boot », mais renvoie plutôt le degré de confiance (la probabilité) pour les 10 possibilités à la fois. Dans ce cas précis, le modèle est presque « absolument certain » (99,06 %) qu’il s’agit de la classe numéro 9 (<strong>Ankle boot</strong>), et exclut quasiment toutes les autres possibilités (probabilités proches de 0).</p>
-<div id="92a7f118" class="cell" data-execution_count="11">
+<div id="014c9d2a" class="cell" data-execution_count="11">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>sum2 <span class="op">=</span> classifications[<span class="dv">0</span>].<span class="bu">sum</span>()</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'sum of outputs: </span><span class="sc">{</span>sum2<span class="sc">}</span><span class="ss">'</span>)</span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>prediction2 <span class="op">=</span> np.argmax(classifications[<span class="dv">0</span>])</span>
 <span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'class with highest probability: </span><span class="sc">{</span>prediction2<span class="sc">}</span><span class="ss">'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>sum of outputs: 1.0000001192092896
+<pre><code>sum of outputs: 1.0
 class with highest probability: 9</code></pre>
 </div>
 </div>
@@ -529,7 +524,7 @@ class with highest probability: 9</code></pre>
 <section id="tester-une-prédiction" class="level2" data-number="4.4">
 <h2 data-number="4.4" class="anchored" data-anchor-id="tester-une-prédiction"><span class="header-section-number">4.4</span> Tester une prédiction</h2>
 <p>On va maintenant tester le modèle sur une image du jeu de test, et visualiser le résultat.</p>
-<div id="617b5bda" class="cell" data-execution_count="12">
+<div id="3c69ceec" class="cell" data-execution_count="12">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Liste des noms de classes correspondant aux labels (0 à 9)</span></span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>class_names <span class="op">=</span> [<span class="st">'T-shirt/top'</span>, <span class="st">'Trouser'</span>, <span class="st">'Pullover'</span>, <span class="st">'Dress'</span>, <span class="st">'Coat'</span>,</span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>               <span class="st">'Sandal'</span>, <span class="st">'Shirt'</span>, <span class="st">'Sneaker'</span>, <span class="st">'Bag'</span>, <span class="st">'Ankle boot'</span>]</span>
@@ -554,16 +549,12 @@ class with highest probability: 9</code></pre>
 <span id="cb21-22"><a href="#cb21-22" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
-  1/313 [..............................] - ETA: 8s
- 37/313 [==&gt;...........................] - ETA: 0s
- 70/313 [=====&gt;........................] - ETA: 0s
-103/313 [========&gt;.....................] - ETA: 0s
-139/313 [============&gt;.................] - ETA: 0s
-177/313 [===============&gt;..............] - ETA: 0s
-213/313 [===================&gt;..........] - ETA: 0s
-250/313 [======================&gt;.......] - ETA: 0s
-287/313 [==========================&gt;...] - ETA: 0s
-313/313 [==============================] - 0s 1ms/step</code></pre>
+  1/313 [..............................] - ETA: 5s
+ 63/313 [=====&gt;........................] - ETA: 0s
+129/313 [===========&gt;..................] - ETA: 0s
+195/313 [=================&gt;............] - ETA: 0s
+261/313 [========================&gt;.....] - ETA: 0s
+313/313 [==============================] - 0s 808us/step</code></pre>
 </div>
 <div class="cell-output cell-output-display">
 <div>
@@ -579,7 +570,7 @@ class with highest probability: 9</code></pre>
 <h1 data-number="5"><span class="header-section-number">5</span> Question</h1>
 <section id="layer-avec-512-neurons." class="level2" data-number="5.1">
 <h2 data-number="5.1" class="anchored" data-anchor-id="layer-avec-512-neurons."><span class="header-section-number">5.1</span> Layer avec 512 neurons.</h2>
-<div id="5ce0f85c" class="cell" data-execution_count="13">
+<div id="09266a60" class="cell" data-execution_count="13">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>fmnist <span class="op">=</span> tf.keras.datasets.fashion_mnist</span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>(training_images, training_labels), (test_images, test_labels) <span class="op">=</span> fmnist.load_data()</span>
@@ -610,44 +601,42 @@ class with highest probability: 9</code></pre>
 <pre><code>Training:
 
 Epoch 1/5
-1875/1875 - 10s - loss: 0.4765 - accuracy: 0.8299 - 10s/epoch - 6ms/step
+1875/1875 - 8s - loss: 0.4734 - accuracy: 0.8305 - 8s/epoch - 5ms/step
 Epoch 2/5
-1875/1875 - 10s - loss: 0.3590 - accuracy: 0.8679 - 10s/epoch - 5ms/step
+1875/1875 - 8s - loss: 0.3581 - accuracy: 0.8686 - 8s/epoch - 4ms/step
 Epoch 3/5
-1875/1875 - 10s - loss: 0.3237 - accuracy: 0.8813 - 10s/epoch - 5ms/step
+1875/1875 - 8s - loss: 0.3213 - accuracy: 0.8820 - 8s/epoch - 4ms/step
 Epoch 4/5
-1875/1875 - 10s - loss: 0.2991 - accuracy: 0.8901 - 10s/epoch - 5ms/step
+1875/1875 - 8s - loss: 0.2983 - accuracy: 0.8901 - 8s/epoch - 4ms/step
 Epoch 5/5
-1875/1875 - 10s - loss: 0.2794 - accuracy: 0.8954 - 10s/epoch - 5ms/step
+1875/1875 - 8s - loss: 0.2824 - accuracy: 0.8950 - 8s/epoch - 4ms/step
 
 Evaluating on test set:
 
 
-  1/313 [..............................] - ETA: 34s - loss: 0.3498 - accuracy: 0.8438
- 44/313 [===&gt;..........................] - ETA: 0s - loss: 0.3300 - accuracy: 0.8835 
- 89/313 [=======&gt;......................] - ETA: 0s - loss: 0.3170 - accuracy: 0.8848
-130/313 [===========&gt;..................] - ETA: 0s - loss: 0.3464 - accuracy: 0.8757
-176/313 [===============&gt;..............] - ETA: 0s - loss: 0.3517 - accuracy: 0.8743
-227/313 [====================&gt;.........] - ETA: 0s - loss: 0.3478 - accuracy: 0.8753
-278/313 [=========================&gt;....] - ETA: 0s - loss: 0.3409 - accuracy: 0.8797
-313/313 [==============================] - 0s 1ms/step - loss: 0.3403 - accuracy: 0.8796
+  1/313 [..............................] - ETA: 29s - loss: 0.3083 - accuracy: 0.9062
+ 49/313 [===&gt;..........................] - ETA: 0s - loss: 0.3223 - accuracy: 0.8801 
+ 99/313 [========&gt;.....................] - ETA: 0s - loss: 0.3216 - accuracy: 0.8816
+150/313 [=============&gt;................] - ETA: 0s - loss: 0.3335 - accuracy: 0.8798
+201/313 [==================&gt;...........] - ETA: 0s - loss: 0.3400 - accuracy: 0.8778
+252/313 [=======================&gt;......] - ETA: 0s - loss: 0.3316 - accuracy: 0.8792
+302/313 [===========================&gt;..] - ETA: 0s - loss: 0.3310 - accuracy: 0.8794
+313/313 [==============================] - 0s 1ms/step - loss: 0.3294 - accuracy: 0.8797
 
 Predicting using test set:
 
 
-  1/313 [..............................] - ETA: 16s
- 38/313 [==&gt;...........................] - ETA: 0s 
- 84/313 [=======&gt;......................] - ETA: 0s
-132/313 [===========&gt;..................] - ETA: 0s
-179/313 [================&gt;.............] - ETA: 0s
-212/313 [===================&gt;..........] - ETA: 0s
-251/313 [=======================&gt;......] - ETA: 0s
-295/313 [===========================&gt;..] - ETA: 0s
-313/313 [==============================] - 0s 1ms/step
+  1/313 [..............................] - ETA: 13s
+ 53/313 [====&gt;.........................] - ETA: 0s 
+108/313 [=========&gt;....................] - ETA: 0s
+162/313 [==============&gt;...............] - ETA: 0s
+216/313 [===================&gt;..........] - ETA: 0s
+271/313 [========================&gt;.....] - ETA: 0s
+313/313 [==============================] - 0s 934us/step
 
 True class for first image on test set: 9
 Probability of each class:
-[8.2252200e-06 3.3631075e-08 2.8868871e-07 1.2512155e-07 1.2848781e-07 6.8230550e-03 6.6070070e-06 1.2184944e-01 1.3577601e-06 8.7131077e-01]</code></pre>
+[1.4229240e-05 9.0074735e-07 8.6234479e-07 5.4086083e-08 1.7850392e-05 8.3294548e-03 2.2117849e-05 6.4621963e-02 6.8708041e-06 9.2698574e-01]</code></pre>
 </div>
 </div>
 <p><strong>Comparaison des résultats d’entraînement (Training)</strong></p>
@@ -714,7 +703,7 @@ Probability of each class:
 <section id="final-output-layers" class="level2" data-number="5.3">
 <h2 data-number="5.3" class="anchored" data-anchor-id="final-output-layers"><span class="header-section-number">5.3</span> Final (output) layers</h2>
 <p>On va rencontrer une erreur dès que le modèle rencontre une valeur qu’il n’attendait pas. Autre règle importante : le nombre de neurones dans la dernière couche doit correspondre au nombre de classes que l’on cherche à classifier. Dans notre cas, il s’agit des vêtements (10 catégories, de 0 à 9), il doit donc y avoir exactement <strong>10 neurones</strong> dans la couche finale.</p>
-<div id="91065bcf" class="cell" data-execution_count="14">
+<div id="bbd44656" class="cell" data-execution_count="14">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> tf.keras.models.Sequential([</span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>    tf.keras.Input(shape<span class="op">=</span>(<span class="dv">28</span>,<span class="dv">28</span>)),</span>
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>    tf.keras.layers.Flatten(),</span>
@@ -739,7 +728,7 @@ Probability of each class:
 </section>
 <section id="si-non-normalisation-les-données" class="level2" data-number="5.6">
 <h2 data-number="5.6" class="anchored" data-anchor-id="si-non-normalisation-les-données"><span class="header-section-number">5.6</span> Si non normalisation les données</h2>
-<div id="ead3e960" class="cell" data-execution_count="15">
+<div id="e9fe6048" class="cell" data-execution_count="15">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>fmnist <span class="op">=</span> tf.keras.datasets.fashion_mnist</span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>(training_images, training_labels), (test_images, test_labels) <span class="op">=</span> fmnist.load_data()</span>
@@ -767,40 +756,41 @@ Probability of each class:
 <pre><code>Training:
 
 Epoch 1/5
-1875/1875 - 4s - loss: 3.1317 - accuracy: 0.7043 - 4s/epoch - 2ms/step
+1875/1875 - 3s - loss: 3.0959 - accuracy: 0.6922 - 3s/epoch - 1ms/step
 Epoch 2/5
-1875/1875 - 2s - loss: 0.7071 - accuracy: 0.7520 - 2s/epoch - 1ms/step
+1875/1875 - 2s - loss: 0.7214 - accuracy: 0.7412 - 2s/epoch - 1ms/step
 Epoch 3/5
-1875/1875 - 3s - loss: 0.5933 - accuracy: 0.7961 - 3s/epoch - 2ms/step
+1875/1875 - 2s - loss: 0.6193 - accuracy: 0.7741 - 2s/epoch - 1ms/step
 Epoch 4/5
-1875/1875 - 2s - loss: 0.5522 - accuracy: 0.8114 - 2s/epoch - 1ms/step
+1875/1875 - 2s - loss: 0.5937 - accuracy: 0.7823 - 2s/epoch - 1ms/step
 Epoch 5/5
-1875/1875 - 3s - loss: 0.5266 - accuracy: 0.8210 - 3s/epoch - 2ms/step
+1875/1875 - 3s - loss: 0.5480 - accuracy: 0.8015 - 3s/epoch - 1ms/step
 
 Evaluating on test set:
 
 
-  1/313 [..............................] - ETA: 28s - loss: 0.7903 - accuracy: 0.8750
- 55/313 [====&gt;.........................] - ETA: 0s - loss: 0.4675 - accuracy: 0.8438 
-113/313 [=========&gt;....................] - ETA: 0s - loss: 0.5015 - accuracy: 0.8308
-171/313 [===============&gt;..............] - ETA: 0s - loss: 0.5184 - accuracy: 0.8291
-229/313 [====================&gt;.........] - ETA: 0s - loss: 0.5274 - accuracy: 0.8237
-286/313 [==========================&gt;...] - ETA: 0s - loss: 0.5267 - accuracy: 0.8235
-313/313 [==============================] - 0s 905us/step - loss: 0.5266 - accuracy: 0.8236
+  1/313 [..............................] - ETA: 27s - loss: 0.8335 - accuracy: 0.7812
+ 55/313 [====&gt;.........................] - ETA: 0s - loss: 0.4984 - accuracy: 0.8250 
+112/313 [=========&gt;....................] - ETA: 0s - loss: 0.5251 - accuracy: 0.8175
+170/313 [===============&gt;..............] - ETA: 0s - loss: 0.5302 - accuracy: 0.8182
+228/313 [====================&gt;.........] - ETA: 0s - loss: 0.5308 - accuracy: 0.8177
+285/313 [==========================&gt;...] - ETA: 0s - loss: 0.5304 - accuracy: 0.8172
+313/313 [==============================] - 0s 892us/step - loss: 0.5313 - accuracy: 0.8183
 
 Predicting using test set:
 
 
-  1/313 [..............................] - ETA: 15s
- 63/313 [=====&gt;........................] - ETA: 0s 
-126/313 [===========&gt;..................] - ETA: 0s
-189/313 [=================&gt;............] - ETA: 0s
-252/313 [=======================&gt;......] - ETA: 0s
-313/313 [==============================] - 0s 803us/step
+  1/313 [..............................] - ETA: 11s
+ 61/313 [====&gt;.........................] - ETA: 0s 
+123/313 [==========&gt;...................] - ETA: 0s
+186/313 [================&gt;.............] - ETA: 0s
+248/313 [======================&gt;.......] - ETA: 0s
+311/313 [============================&gt;.] - ETA: 0s
+313/313 [==============================] - 0s 815us/step
 
 True class for first image on test set: 9
 Probability of each class:
-[7.8278347e-14 2.4998952e-17 0.0000000e+00 1.1323446e-26 2.2404687e-28 5.0230872e-02 5.5690195e-28 8.5910022e-02 1.2671315e-10 8.6385918e-01]</code></pre>
+[2.93531567e-20 1.10162086e-17 0.00000000e+00 5.49049890e-15 5.17599432e-32 5.10639213e-02 6.42979541e-32 3.20359096e-02 1.03806395e-13 9.16900158e-01]</code></pre>
 </div>
 </div>
 <p><strong>Comparaison des résultats</strong></p>
@@ -858,10 +848,10 @@ Epoch 1 → loss = 0,4999 ; accuracy = 82,37 %
 Sans normalisation :
 Epoch 1 → loss = 3,0243 ; accuracy = 66,73 %</code></pre>
 <p>Le modèle peut toujours être entraîné <strong>sans normalisation</strong>, mais il apprend moins efficacement au début.</p>
-<p>** Pourquoi obtient-on des résultats différents ? **</p>
+<p><strong>Pourquoi obtient-on des résultats différents ? </strong></p>
 <p>Dans le dataset <strong>Fashion-MNIST</strong>, les valeurs des pixels sont initialement comprises entre <code>0</code> et <code>255</code>.</p>
 <p>Lorsque nous normalisons les données avec :</p>
-<div id="da0a178e" class="cell" data-execution_count="16">
+<div id="1a487d4a" class="cell" data-execution_count="16">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>training_images <span class="op">=</span> training_images <span class="op">/</span> <span class="fl">255.0</span></span>
 <span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>test_images <span class="op">=</span> test_images <span class="op">/</span> <span class="fl">255.0</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -892,7 +882,7 @@ Sans normalisation    → 82,88 % sur le test</code></pre>
 <section id="callbacks" class="level1" data-number="6">
 <h1 data-number="6"><span class="header-section-number">6</span> Callbacks</h1>
 <p>On peut constater qu’après plusieurs epochs, l’accuracy atteint un niveau élevé et varie peu, tandis que la loss continue progressivement à diminuer. Dans ce cas, nous pouvons utiliser une fonction de <strong>callback</strong>, comme <code>EarlyStopping</code>, pour arrêter automatiquement l’entraînement lorsque le modèle n’améliore plus suffisamment ses performances. Cela permet d’éviter des epochs inutiles et de <strong>réduire le temps d’entraînement</strong>.</p>
-<div id="f9003e91" class="cell" data-execution_count="17">
+<div id="7522d694" class="cell" data-execution_count="17">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> myCallback(tf.keras.callbacks.Callback):</span>
 <span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> on_epoch_end(<span class="va">self</span>, epoch, logs<span class="op">=</span>{}):</span>
 <span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span>(logs.get(<span class="st">'accuracy'</span>) <span class="op">&gt;=</span> <span class="fl">0.89</span>): </span>
@@ -918,20 +908,20 @@ Sans normalisation    → 82,88 % sur le test</code></pre>
 <span id="cb36-23"><a href="#cb36-23" aria-hidden="true" tabindex="-1"></a>model.fit(training_images, training_labels, epochs<span class="op">=</span><span class="dv">5</span>, callbacks<span class="op">=</span>[callbacks], verbose<span class="op">=</span><span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Epoch 1/5
-1875/1875 - 10s - loss: 0.4748 - accuracy: 0.8310 - 10s/epoch - 5ms/step
+1875/1875 - 8s - loss: 0.4747 - accuracy: 0.8298 - 8s/epoch - 5ms/step
 Epoch 2/5
-1875/1875 - 9s - loss: 0.3582 - accuracy: 0.8688 - 9s/epoch - 5ms/step
+1875/1875 - 8s - loss: 0.3578 - accuracy: 0.8686 - 8s/epoch - 4ms/step
 Epoch 3/5
-1875/1875 - 10s - loss: 0.3245 - accuracy: 0.8803 - 10s/epoch - 5ms/step
+1875/1875 - 9s - loss: 0.3227 - accuracy: 0.8806 - 9s/epoch - 5ms/step
 Epoch 4/5
-1875/1875 - 9s - loss: 0.3003 - accuracy: 0.8880 - 9s/epoch - 5ms/step
+1875/1875 - 9s - loss: 0.2984 - accuracy: 0.8892 - 9s/epoch - 5ms/step
 Epoch 5/5
 
 Reached 89% accuracy so cancelling training!
-1875/1875 - 10s - loss: 0.2821 - accuracy: 0.8960 - 10s/epoch - 5ms/step</code></pre>
+1875/1875 - 9s - loss: 0.2817 - accuracy: 0.8954 - 9s/epoch - 5ms/step</code></pre>
 </div>
-<div class="cell-output cell-output-display" data-execution_count="68">
-<pre><code>&lt;keras.src.callbacks.History at 0x1420e7950&gt;</code></pre>
+<div class="cell-output cell-output-display" data-execution_count="17">
+<pre><code>&lt;keras.src.callbacks.History at 0x1372fec10&gt;</code></pre>
 </div>
 </div>
 

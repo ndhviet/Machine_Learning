@@ -15,6 +15,8 @@ website:
         text: Partie 2
       - href: Part3.qmd
         text: Partie 3
+      - href: horse_human_demo.html
+        text: "Démo interactive"
       - href: Part4.qmd
         text: Partie 4 
         

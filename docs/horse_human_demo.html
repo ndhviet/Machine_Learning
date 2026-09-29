@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Démo : Cheval ou Humain ?</title>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.15.0/dist/tf.min.js"></script>
+<style>
+  body { font-family: sans-serif; text-align: center; padding: 40px; }
+  #preview { max-width: 300px; margin: 20px auto; display: block; }
+  #result { font-size: 1.4em; font-weight: bold; margin-top: 20px; }
+</style>
+</head>
+<body>
+
+<h1>Cheval ou Humain ?</h1>
+<p>Choisissez une image pour tester le modèle directement dans votre navigateur.</p>
+
+<input type="file" id="upload" accept="image/*">
+<img id="preview" style="display:none;">
+<div id="result"></div>
+<div id="status">Chargement du modèle...</div>
+
+<script>
+let model;
+
+// Charger le modèle au démarrage de la page
+async function loadModel() {
+  model = await tf.loadLayersModel('tfjs_model/model.json');
+  document.getElementById('status').innerText = 'Modèle prêt !';
+}
+loadModel();
+
+document.getElementById('upload').addEventListener('change', async (event) => {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const img = document.getElementById('preview');
+  img.src = URL.createObjectURL(file);
+  img.style.display = 'block';
+
+  img.onload = async () => {
+    const result = document.getElementById('result');
+    result.innerText = 'Analyse en cours...';
+
+    // Prétraiter l'image : redimensionner à 300x300, normaliser
+    const tensor = tf.browser.fromPixels(img)
+      .resizeNearestNeighbor([300, 300])
+      .toFloat()
+      .div(255.0)
+      .expandDims();
+
+    const prediction = model.predict(tensor);
+    const value = (await prediction.data())[0];
+
+    result.innerText = value > 0.5
+      ? `Humain (confiance : ${(value*100).toFixed(1)}%)`
+      : `Cheval (confiance : ${((1-value)*100).toFixed(1)}%)`;
+
+    tensor.dispose();
+    prediction.dispose();
+  };
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,306 @@
+---
+title: "Partie 3 Dataset FMINISTs"
+author: "NGUYEN Duc Hoang Viet"
+number-sections: true 
+code-fold: false
+execute:
+  python: /Users/nguyenduchoangviet/Documents/github/Machine_Learning/.venv/bin/python
+  warning: false
+  message: false
+---
+
+
+
+# Introduction
+
+
+# Import les modules et le dataset
+
+```{python}
+import random  
+import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.image as mpimg
+import tensorflow as tf
+```
+
+```{python}
+import os
+
+TRAIN_DIR = 'photos/horse-or-human'
+print(f"\nSubdirectories within '{TRAIN_DIR}' dir: {os.listdir(TRAIN_DIR)}")
+```
+
+```{python}
+# Répertoire contenant les images d'entraînement des chevaux
+train_horse_dir = os.path.join(TRAIN_DIR, 'horses')
+
+# Répertoire contenant les images d'entraînement des humains
+train_human_dir = os.path.join(TRAIN_DIR, 'humans')
+
+# Check les filenames
+train_horse_names = os.listdir(train_horse_dir)
+print(f"5 files in horses subdir: {train_horse_names[:5]}")
+train_human_names = os.listdir(train_human_dir)
+print(f"5 files in humans subdir:{train_human_names[:5]}")
+```
+
+```{python}
+print(f"total training horse images: {len(os.listdir(train_horse_dir))}")
+print(f"total training human images: {len(os.listdir(train_human_dir))}")
+```
+
+```{python}
+# Paramètres pour votre graphique ; affichage des images dans une grille 4x4
+nrows = 4
+ncols = 4
+
+# Configuration de la figure matplotlib et ajustement de la taille pour la grille 4x4
+fig = plt.gcf()
+fig.set_size_inches(ncols * 3, nrows * 3)
+
+next_horse_pix = [os.path.join(train_horse_dir, fname)
+                for fname in random.sample(train_horse_names, k=8)]
+next_human_pix = [os.path.join(train_human_dir, fname)
+                for fname in random.sample(train_human_names, k=8)]
+
+for i, img_path in enumerate(next_horse_pix + next_human_pix):
+    # Configuration du sous-graphique ; les indices commencent à 1
+    sp = plt.subplot(nrows, ncols, i + 1)
+    sp.axis('Off') # Masquer les axes (et les quadrillages)
+
+    img = mpimg.imread(img_path)
+    plt.imshow(img)
+
+plt.show()
+```
+
+
+# Modele
+
+```{python}
+model = tf.keras.models.Sequential([
+    # Note the input shape is the desired size of the image 300x300 with 3 bytes color
+    # This is the first convolution
+    tf.keras.Input(shape=(300, 300, 3)),
+    tf.keras.layers.Conv2D(16, (3,3), activation='relu'),
+    tf.keras.layers.MaxPooling2D(2, 2),
+    # The second convolution
+    tf.keras.layers.Conv2D(32, (3,3), activation='relu'),
+    tf.keras.layers.MaxPooling2D(2,2),
+    # The third convolution
+    tf.keras.layers.Conv2D(64, (3,3), activation='relu'),
+    tf.keras.layers.MaxPooling2D(2,2),
+    # The fourth convolution
+    tf.keras.layers.Conv2D(64, (3,3), activation='relu'),
+    tf.keras.layers.MaxPooling2D(2,2),
+    # The fifth convolution
+    tf.keras.layers.Conv2D(64, (3,3), activation='relu'),
+    tf.keras.layers.MaxPooling2D(2,2),
+    # Flatten the results to feed into a DNN
+    tf.keras.layers.Flatten(),
+    # 512 neuron hidden layer
+    tf.keras.layers.Dense(512, activation='relu'),
+    # Only 1 output neuron. It will contain a value from 0 to 1 where 0 is for 'horses' and 1 for 'humans'
+    tf.keras.layers.Dense(1, activation='sigmoid')
+])
+```
+
+
+```{python}
+model.summary()
+```
+
+
+```{python}
+model.compile(loss='binary_crossentropy',
+              optimizer=tf.keras.optimizers.RMSprop(learning_rate=0.001),
+              metrics=['accuracy'])
+```
+
+Contrairement à Fashion MNIST, nos images sont des fichiers `.jpg` répartis dans des dossiers, pas des tableaux de nombres. La fonction `image_dataset_from_directory` s'occupe automatiquement de :
+
+1. Lire toutes les images des deux sous-dossiers (`horses/`, `humans/`)
+2. Attribuer les labels selon le dossier — 0 pour `horses/`, 1 pour `humans/`
+3. Redimensionner toutes les images en `(300, 300)`
+4. Regrouper les images en batches de 32, pour un entraînement plus rapide
+
+**À propos de `label_mode='binary'`** : comme il n'y a que 2 classes, ce paramètre indique que le label doit être un simple 0 ou 1, ce qui correspond à la couche de sortie `Dense(1, activation='sigmoid')` définie dans le modèle.
+
+```{python}
+# Instantiate the dataset
+train_dataset = tf.keras.utils.image_dataset_from_directory(
+    TRAIN_DIR,
+    image_size=(300, 300),
+    batch_size=32,
+    label_mode='binary'
+    )
+
+# Check the type
+dataset_type = type(train_dataset)
+print(f'train_dataset inherits from tf.data.Dataset: {issubclass(dataset_type, tf.data.Dataset)}')
+```
+
+
+```{python}
+# Get one batch from the dataset
+sample_batch = list(train_dataset.take(1))[0]
+
+# Check that the output is a pair
+print(f'sample batch data type: {type(sample_batch)}')
+print(f'number of elements: {len(sample_batch)}')
+
+# Extract image and label
+image_batch = sample_batch[0]
+label_batch = sample_batch[1]
+
+# Check the shapes
+print(f'image batch shape: {image_batch.shape}')
+print(f'label batch shape: {label_batch.shape}')
+```
+
+## Normalisation 
+
+```{python}
+print(image_batch[0].numpy())
+```
+
+```{python}
+# Check the range of values
+print(f'max value: {np.max(image_batch[0].numpy())}')
+print(f'min value: {np.min(image_batch[0].numpy())}')
+```
+
+```{python}
+rescale_layer = tf.keras.layers.Rescaling(scale=1./255)
+```
+
+```{python}
+image_scaled = rescale_layer(image_batch[0]).numpy()
+
+print(image_scaled)
+```
+
+```{python}
+print(f'max value: {np.max(image_scaled)}')
+print(f'min value: {np.min(image_scaled)}')
+```
+
+```{python}
+# Rescale the image using a lambda function
+train_dataset_scaled = train_dataset.map(lambda image, label: (rescale_layer(image), label))
+
+
+# # Same result as above but without using a lambda function
+# # define a function to rescale the image
+# def rescale_image(image, label):
+#     return rescale_layer(image), label
+
+# dataset_scaled = dataset.map(rescale_image)
+```
+
+```{python}
+# Get one batch of data
+sample_batch =  list(train_dataset_scaled.take(1))[0]
+
+# Get the image
+image_scaled = sample_batch[0][1].numpy()
+
+# Check the range of values for this image
+print(f'max value: {np.max(image_scaled)}')
+print(f'min value: {np.min(image_scaled)}')
+```
+
+## Optimise Data Pipeline
+
+```{python}
+SHUFFLE_BUFFER_SIZE = 1000
+PREFETCH_BUFFER_SIZE = tf.data.AUTOTUNE
+
+train_dataset_final = (train_dataset_scaled
+                       .cache()
+                       .shuffle(SHUFFLE_BUFFER_SIZE)
+                       .prefetch(PREFETCH_BUFFER_SIZE)
+                      )
+```
+
+```{python}
+history = model.fit(train_dataset_final,epochs=15,verbose=2)
+
+# Sauvegarder le modèle entraîné pour le Demo Interactive 
+model.save('horse_human_model.h5')
+```
+
+##  Évolution de l'accuracy pendant l'entraînement
+```{python}
+# Plot the training accuracy for each epoch
+
+acc = history.history['accuracy']
+
+epochs = range(len(acc))
+
+plt.plot(epochs, acc, 'r', label='Training accuracy')
+plt.title('Training accuracy')
+plt.legend(loc=0)
+plt.show()
+```
+
+## Fonctionnement du modèle
+
+```{python}
+# Define a new Model that will take an image as input, and will output
+# intermediate representations for all layers in the previous model after
+# the first.
+successive_outputs = [layer.output for layer in model.layers[1:]]
+visualization_model = tf.keras.models.Model(inputs = model.inputs, outputs = successive_outputs)
+
+# Prepare a random input image from the training set.
+horse_img_files = [os.path.join(train_horse_dir, f) for f in train_horse_names]
+human_img_files = [os.path.join(train_human_dir, f) for f in train_human_names]
+img_path = random.choice(horse_img_files + human_img_files)
+
+img = tf.keras.utils.load_img(img_path, target_size=(300, 300))  # this is a PIL image
+x = tf.keras.utils.img_to_array(img)  # Numpy array with shape (300, 300, 3)
+x = x.reshape((1,) + x.shape)  # Numpy array with shape (1, 300, 300, 3)
+
+# Scale by 1/255
+x = rescale_layer(x)
+
+# Run the image through the network, thus obtaining all
+# intermediate representations for this image.
+successive_feature_maps = visualization_model.predict(x, verbose=False)
+
+# These are the names of the layers, so you can have them as part of the plot
+layer_names = [layer.name for layer in model.layers[1:]]
+
+# Display the representations
+for layer_name, feature_map in zip(layer_names, successive_feature_maps):
+    if len(feature_map.shape) == 4:
+
+        # Just do this for the conv / maxpool layers, not the fully-connected layers
+        n_features = feature_map.shape[-1]  # number of features in feature map
+
+        # The feature map has shape (1, size, size, n_features)
+        size = feature_map.shape[1]
+
+        # Tile the images in this matrix
+        display_grid = np.zeros((size, size * n_features))
+        for i in range(n_features):
+            x = feature_map[0, :, :, i]
+            x -= x.mean()
+            x /= x.std()
+            x *= 64
+            x += 128
+            x = np.clip(x, 0, 255).astype('uint8')
+
+            # Tile each filter into this big horizontal grid
+            display_grid[:, i * size : (i + 1) * size] = x
+
+        # Display the grid
+        scale = 20. / n_features
+        plt.figure(figsize=(scale * n_features, scale))
+        plt.title(layer_name)
+        plt.grid(False)
+        plt.imshow(display_grid, aspect='auto', cmap='viridis')
+```
+

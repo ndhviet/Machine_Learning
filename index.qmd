@@ -16,5 +16,6 @@ Le projet est divisé en plusieurs parties :
 
 -   **Partie 3 :** Dataset Horse vs Human
 
--   **Partie 4 :** Dataset Emoji
+-   **Partie 4 :** Dataset Happy vs Sad
 
+-   **Partie 5 :** Dataset Rock, Paper, Scissors 
