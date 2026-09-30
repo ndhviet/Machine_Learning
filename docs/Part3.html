@@ -148,10 +148,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span class="menu-text">Partie 3</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./horse_human_demo.html"> 
-<span class="menu-text">Démo interactive</span></a>
-  </li>  
-  <li class="nav-item">
     <a class="nav-link" href="./Part4.qmd"> 
 <span class="menu-text">Partie 4</span></a>
   </li>  
@@ -196,6 +192,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#évolution-de-laccuracy-pendant-lentraînement" id="toc-évolution-de-laccuracy-pendant-lentraînement" class="nav-link" data-scroll-target="#évolution-de-laccuracy-pendant-lentraînement"><span class="header-section-number">3.3</span> Évolution de l’accuracy pendant l’entraînement</a></li>
   <li><a href="#fonctionnement-du-modèle" id="toc-fonctionnement-du-modèle" class="nav-link" data-scroll-target="#fonctionnement-du-modèle"><span class="header-section-number">3.4</span> Fonctionnement du modèle</a></li>
   </ul></li>
+  <li><a href="#démo-interactive" id="toc-démo-interactive" class="nav-link" data-scroll-target="#démo-interactive"><span class="header-section-number">4</span> Démo interactive</a></li>
   </ul>
 </nav>
     </div>
@@ -232,71 +229,84 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="import-les-modules-et-le-dataset" class="level1" data-number="2">
 <h1 data-number="2"><span class="header-section-number">2</span> Import les modules et le dataset</h1>
-<div id="1fc5d5ec" class="cell" data-execution_count="1">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> random  </span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.image <span class="im">as</span> mpimg</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> tensorflow <span class="im">as</span> tf</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="9144c2a4" class="cell" data-execution_count="1">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> random  </span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.image <span class="im">as</span> mpimg</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> tensorflow <span class="im">as</span> tf</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="0dd77186" class="cell" data-execution_count="2">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>TRAIN_DIR <span class="op">=</span> <span class="st">'photos/horse-or-human'</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Subdirectories within '</span><span class="sc">{</span>TRAIN_DIR<span class="sc">}</span><span class="ss">' dir: </span><span class="sc">{</span>os<span class="sc">.</span>listdir(TRAIN_DIR)<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="9270b7d1" class="cell" data-execution_count="2">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>TRAIN_DIR <span class="op">=</span> <span class="st">'photos/horse-or-human'</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>VAL_DIR <span class="op">=</span> <span class="st">'photos/validation-horse-or-human'</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Directory with training horse pictures</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>train_horse_dir <span class="op">=</span> os.path.join(TRAIN_DIR, <span class="st">'horses'</span>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Directory with training human pictures</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>train_human_dir <span class="op">=</span> os.path.join(TRAIN_DIR, <span class="st">'humans'</span>)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Directory with validation horse pictures</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>validation_horse_dir <span class="op">=</span> os.path.join(VAL_DIR, <span class="st">'horses'</span>)</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Directory with validation human pictures</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>validation_human_dir <span class="op">=</span> os.path.join(VAL_DIR, <span class="st">'humans'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="d44b3234" class="cell" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>train_horse_names <span class="op">=</span> os.listdir(train_horse_dir)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'TRAIN SET HORSES: </span><span class="sc">{</span>train_horse_names[:<span class="dv">10</span>]<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>train_human_names <span class="op">=</span> os.listdir(train_human_dir)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'TRAIN SET HUMANS: </span><span class="sc">{</span>train_human_names[:<span class="dv">10</span>]<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>validation_horse_hames <span class="op">=</span> os.listdir(validation_horse_dir)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'VAL SET HORSES: </span><span class="sc">{</span>validation_horse_hames[:<span class="dv">10</span>]<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>validation_human_names <span class="op">=</span> os.listdir(validation_human_dir)</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'VAL SET HUMANS: </span><span class="sc">{</span>validation_human_names[:<span class="dv">10</span>]<span class="sc">}</span><span class="ss">'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>
-Subdirectories within 'photos/horse-or-human' dir: ['humans', 'horses']</code></pre>
+<pre><code>TRAIN SET HORSES: ['horse43-5.png', 'horse06-5.png', 'horse20-6.png', 'horse04-7.png', 'horse41-7.png', 'horse22-4.png', 'horse19-2.png', 'horse24-2.png', 'horse37-8.png', 'horse02-1.png']
+TRAIN SET HUMANS: ['human17-22.png', 'human10-17.png', 'human10-03.png', 'human07-27.png', 'human09-22.png', 'human05-22.png', 'human02-03.png', 'human02-17.png', 'human15-27.png', 'human12-12.png']
+VAL SET HORSES: ['horse1-204.png', 'horse2-112.png', 'horse3-498.png', 'horse5-032.png', 'horse5-018.png', 'horse1-170.png', 'horse5-192.png', 'horse1-411.png', 'horse4-232.png', 'horse3-070.png']
+VAL SET HUMANS: ['valhuman04-20.png', 'valhuman03-01.png', 'valhuman04-08.png', 'valhuman03-15.png', 'valhuman01-04.png', 'valhuman01-10.png', 'valhuman01-11.png', 'valhuman01-05.png', 'valhuman03-14.png', 'valhuman03-00.png']</code></pre>
 </div>
 </div>
-<div id="d0ef7ad4" class="cell" data-execution_count="3">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Répertoire contenant les images d'entraînement des chevaux</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>train_horse_dir <span class="op">=</span> os.path.join(TRAIN_DIR, <span class="st">'horses'</span>)</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Répertoire contenant les images d'entraînement des humains</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>train_human_dir <span class="op">=</span> os.path.join(TRAIN_DIR, <span class="st">'humans'</span>)</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Check les filenames</span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>train_horse_names <span class="op">=</span> os.listdir(train_horse_dir)</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"5 files in horses subdir: </span><span class="sc">{</span>train_horse_names[:<span class="dv">5</span>]<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>train_human_names <span class="op">=</span> os.listdir(train_human_dir)</span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"5 files in humans subdir:</span><span class="sc">{</span>train_human_names[:<span class="dv">5</span>]<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>5 files in horses subdir: ['horse43-5.png', 'horse06-5.png', 'horse20-6.png', 'horse04-7.png', 'horse41-7.png']
-5 files in humans subdir:['human17-22.png', 'human10-17.png', 'human10-03.png', 'human07-27.png', 'human09-22.png']</code></pre>
-</div>
-</div>
-<div id="506c9795" class="cell" data-execution_count="4">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"total training horse images: </span><span class="sc">{</span><span class="bu">len</span>(os.listdir(train_horse_dir))<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"total training human images: </span><span class="sc">{</span><span class="bu">len</span>(os.listdir(train_human_dir))<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="2c3b83f5" class="cell" data-execution_count="4">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'total training horse images: </span><span class="sc">{</span><span class="bu">len</span>(os.listdir(train_horse_dir))<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'total training human images: </span><span class="sc">{</span><span class="bu">len</span>(os.listdir(train_human_dir))<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'total validation horse images: </span><span class="sc">{</span><span class="bu">len</span>(os.listdir(validation_horse_dir))<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'total validation human images: </span><span class="sc">{</span><span class="bu">len</span>(os.listdir(validation_human_dir))<span class="sc">}</span><span class="ss">'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>total training horse images: 500
-total training human images: 527</code></pre>
+total training human images: 527
+total validation horse images: 128
+total validation human images: 128</code></pre>
 </div>
 </div>
-<div id="47a91d05" class="cell" data-execution_count="5">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Paramètres pour votre graphique ; affichage des images dans une grille 4x4</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>nrows <span class="op">=</span> <span class="dv">4</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>ncols <span class="op">=</span> <span class="dv">4</span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Configuration de la figure matplotlib et ajustement de la taille pour la grille 4x4</span></span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.gcf()</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>fig.set_size_inches(ncols <span class="op">*</span> <span class="dv">3</span>, nrows <span class="op">*</span> <span class="dv">3</span>)</span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>next_horse_pix <span class="op">=</span> [os.path.join(train_horse_dir, fname)</span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>                <span class="cf">for</span> fname <span class="kw">in</span> random.sample(train_horse_names, k<span class="op">=</span><span class="dv">8</span>)]</span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>next_human_pix <span class="op">=</span> [os.path.join(train_human_dir, fname)</span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>                <span class="cf">for</span> fname <span class="kw">in</span> random.sample(train_human_names, k<span class="op">=</span><span class="dv">8</span>)]</span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i, img_path <span class="kw">in</span> <span class="bu">enumerate</span>(next_horse_pix <span class="op">+</span> next_human_pix):</span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Configuration du sous-graphique ; les indices commencent à 1</span></span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>    sp <span class="op">=</span> plt.subplot(nrows, ncols, i <span class="op">+</span> <span class="dv">1</span>)</span>
-<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>    sp.axis(<span class="st">'Off'</span>) <span class="co"># Masquer les axes (et les quadrillages)</span></span>
-<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>    img <span class="op">=</span> mpimg.imread(img_path)</span>
-<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>    plt.imshow(img)</span>
-<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="c8ab276a" class="cell" data-execution_count="5">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Paramètres pour votre graphique ; affichage des images dans une grille 4x4</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>nrows <span class="op">=</span> <span class="dv">4</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>ncols <span class="op">=</span> <span class="dv">4</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Configuration de la figure matplotlib et ajustement de la taille pour la grille 4x4</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.gcf()</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>fig.set_size_inches(ncols <span class="op">*</span> <span class="dv">3</span>, nrows <span class="op">*</span> <span class="dv">3</span>)</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>next_horse_pix <span class="op">=</span> [os.path.join(train_horse_dir, fname)</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>                <span class="cf">for</span> fname <span class="kw">in</span> random.sample(train_horse_names, k<span class="op">=</span><span class="dv">8</span>)]</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>next_human_pix <span class="op">=</span> [os.path.join(train_human_dir, fname)</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>                <span class="cf">for</span> fname <span class="kw">in</span> random.sample(train_human_names, k<span class="op">=</span><span class="dv">8</span>)]</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i, img_path <span class="kw">in</span> <span class="bu">enumerate</span>(next_horse_pix <span class="op">+</span> next_human_pix):</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Configuration du sous-graphique ; les indices commencent à 1</span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>    sp <span class="op">=</span> plt.subplot(nrows, ncols, i <span class="op">+</span> <span class="dv">1</span>)</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>    sp.axis(<span class="st">'Off'</span>) <span class="co"># Masquer les axes (et les quadrillages)</span></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>    img <span class="op">=</span> mpimg.imread(img_path)</span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>    plt.imshow(img)</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -308,35 +318,35 @@ total training human images: 527</code></pre>
 </section>
 <section id="modele" class="level1" data-number="3">
 <h1 data-number="3"><span class="header-section-number">3</span> Modele</h1>
-<div id="1f5b9937" class="cell" data-execution_count="6">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> tf.keras.models.Sequential([</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Note the input shape is the desired size of the image 300x300 with 3 bytes color</span></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># This is the first convolution</span></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    tf.keras.Input(shape<span class="op">=</span>(<span class="dv">300</span>, <span class="dv">300</span>, <span class="dv">3</span>)),</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    tf.keras.layers.Conv2D(<span class="dv">16</span>, (<span class="dv">3</span>,<span class="dv">3</span>), activation<span class="op">=</span><span class="st">'relu'</span>),</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    tf.keras.layers.MaxPooling2D(<span class="dv">2</span>, <span class="dv">2</span>),</span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    <span class="co"># The second convolution</span></span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    tf.keras.layers.Conv2D(<span class="dv">32</span>, (<span class="dv">3</span>,<span class="dv">3</span>), activation<span class="op">=</span><span class="st">'relu'</span>),</span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    tf.keras.layers.MaxPooling2D(<span class="dv">2</span>,<span class="dv">2</span>),</span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>    <span class="co"># The third convolution</span></span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>    tf.keras.layers.Conv2D(<span class="dv">64</span>, (<span class="dv">3</span>,<span class="dv">3</span>), activation<span class="op">=</span><span class="st">'relu'</span>),</span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>    tf.keras.layers.MaxPooling2D(<span class="dv">2</span>,<span class="dv">2</span>),</span>
-<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>    <span class="co"># The fourth convolution</span></span>
-<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>    tf.keras.layers.Conv2D(<span class="dv">64</span>, (<span class="dv">3</span>,<span class="dv">3</span>), activation<span class="op">=</span><span class="st">'relu'</span>),</span>
-<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>    tf.keras.layers.MaxPooling2D(<span class="dv">2</span>,<span class="dv">2</span>),</span>
-<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>    <span class="co"># The fifth convolution</span></span>
-<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>    tf.keras.layers.Conv2D(<span class="dv">64</span>, (<span class="dv">3</span>,<span class="dv">3</span>), activation<span class="op">=</span><span class="st">'relu'</span>),</span>
-<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>    tf.keras.layers.MaxPooling2D(<span class="dv">2</span>,<span class="dv">2</span>),</span>
-<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Flatten the results to feed into a DNN</span></span>
-<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>    tf.keras.layers.Flatten(),</span>
-<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 512 neuron hidden layer</span></span>
-<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>    tf.keras.layers.Dense(<span class="dv">512</span>, activation<span class="op">=</span><span class="st">'relu'</span>),</span>
-<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Only 1 output neuron. It will contain a value from 0 to 1 where 0 is for 'horses' and 1 for 'humans'</span></span>
-<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>    tf.keras.layers.Dense(<span class="dv">1</span>, activation<span class="op">=</span><span class="st">'sigmoid'</span>)</span>
-<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="e4b7e6a1" class="cell" data-execution_count="6">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> tf.keras.models.Sequential([</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Note the input shape is the desired size of the image 300x300 with 3 bytes color</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># This is the first convolution</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    tf.keras.Input(shape<span class="op">=</span>(<span class="dv">300</span>, <span class="dv">300</span>, <span class="dv">3</span>)),</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    tf.keras.layers.Conv2D(<span class="dv">16</span>, (<span class="dv">3</span>,<span class="dv">3</span>), activation<span class="op">=</span><span class="st">'relu'</span>),</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    tf.keras.layers.MaxPooling2D(<span class="dv">2</span>, <span class="dv">2</span>),</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    <span class="co"># The second convolution</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    tf.keras.layers.Conv2D(<span class="dv">32</span>, (<span class="dv">3</span>,<span class="dv">3</span>), activation<span class="op">=</span><span class="st">'relu'</span>),</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    tf.keras.layers.MaxPooling2D(<span class="dv">2</span>,<span class="dv">2</span>),</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>    <span class="co"># The third convolution</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>    tf.keras.layers.Conv2D(<span class="dv">64</span>, (<span class="dv">3</span>,<span class="dv">3</span>), activation<span class="op">=</span><span class="st">'relu'</span>),</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>    tf.keras.layers.MaxPooling2D(<span class="dv">2</span>,<span class="dv">2</span>),</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>    <span class="co"># The fourth convolution</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>    tf.keras.layers.Conv2D(<span class="dv">64</span>, (<span class="dv">3</span>,<span class="dv">3</span>), activation<span class="op">=</span><span class="st">'relu'</span>),</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>    tf.keras.layers.MaxPooling2D(<span class="dv">2</span>,<span class="dv">2</span>),</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>    <span class="co"># The fifth convolution</span></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>    tf.keras.layers.Conv2D(<span class="dv">64</span>, (<span class="dv">3</span>,<span class="dv">3</span>), activation<span class="op">=</span><span class="st">'relu'</span>),</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>    tf.keras.layers.MaxPooling2D(<span class="dv">2</span>,<span class="dv">2</span>),</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Flatten the results to feed into a DNN</span></span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>    tf.keras.layers.Flatten(),</span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 512 neuron hidden layer</span></span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>    tf.keras.layers.Dense(<span class="dv">512</span>, activation<span class="op">=</span><span class="st">'relu'</span>),</span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Only 1 output neuron. It will contain a value from 0 to 1 where 0 is for 'horses' and 1 for 'humans'</span></span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>    tf.keras.layers.Dense(<span class="dv">1</span>, activation<span class="op">=</span><span class="st">'sigmoid'</span>) <span class="co"># co the la 2 neu thay doi activation = softmax</span></span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="0900553b" class="cell" data-execution_count="7">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>model.summary()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="e7c80072" class="cell" data-execution_count="7">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>model.summary()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold">Model: "sequential"</span>
 </pre>
@@ -386,10 +396,10 @@ total training human images: 527</code></pre>
 </pre>
 </div>
 </div>
-<div id="d52e3cbe" class="cell" data-execution_count="8">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>model.<span class="bu">compile</span>(loss<span class="op">=</span><span class="st">'binary_crossentropy'</span>,</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>              optimizer<span class="op">=</span>tf.keras.optimizers.RMSprop(learning_rate<span class="op">=</span><span class="fl">0.001</span>),</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>              metrics<span class="op">=</span>[<span class="st">'accuracy'</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="fd066341" class="cell" data-execution_count="8">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>model.<span class="bu">compile</span>(loss<span class="op">=</span><span class="st">'binary_crossentropy'</span>,</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>              optimizer<span class="op">=</span>tf.keras.optimizers.RMSprop(learning_rate<span class="op">=</span><span class="fl">0.001</span>),</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>              metrics<span class="op">=</span>[<span class="st">'accuracy'</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Contrairement à Fashion MNIST, nos images sont des fichiers <code>.jpg</code> répartis dans des dossiers, pas des tableaux de nombres. La fonction <code>image_dataset_from_directory</code> s’occupe automatiquement de :</p>
 <ol type="1">
@@ -399,38 +409,42 @@ total training human images: 527</code></pre>
 <li>Regrouper les images en batches de 32, pour un entraînement plus rapide</li>
 </ol>
 <p><strong>À propos de <code>label_mode='binary'</code></strong> : comme il n’y a que 2 classes, ce paramètre indique que le label doit être un simple 0 ou 1, ce qui correspond à la couche de sortie <code>Dense(1, activation='sigmoid')</code> définie dans le modèle.</p>
-<div id="801680c1" class="cell" data-execution_count="9">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Instantiate the dataset</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>train_dataset <span class="op">=</span> tf.keras.utils.image_dataset_from_directory(</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    TRAIN_DIR,</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    image_size<span class="op">=</span>(<span class="dv">300</span>, <span class="dv">300</span>),</span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    batch_size<span class="op">=</span><span class="dv">32</span>,</span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    label_mode<span class="op">=</span><span class="st">'binary'</span></span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Check the type</span></span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>dataset_type <span class="op">=</span> <span class="bu">type</span>(train_dataset)</span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'train_dataset inherits from tf.data.Dataset: </span><span class="sc">{</span><span class="bu">issubclass</span>(dataset_type, tf.data.Dataset)<span class="sc">}</span><span class="ss">'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="9dbefa2d" class="cell" data-execution_count="9">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Instantiate the dataset</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>train_dataset <span class="op">=</span> tf.keras.utils.image_dataset_from_directory(</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    TRAIN_DIR,</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    image_size<span class="op">=</span>(<span class="dv">300</span>, <span class="dv">300</span>),</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    batch_size<span class="op">=</span><span class="dv">32</span>,</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    label_mode<span class="op">=</span><span class="st">'binary'</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Instantiate the validation dataset</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>validation_dataset <span class="op">=</span> tf.keras.utils.image_dataset_from_directory(</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>    VAL_DIR,</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>    image_size<span class="op">=</span>(<span class="dv">300</span>, <span class="dv">300</span>),</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>    batch_size<span class="op">=</span><span class="dv">32</span>,</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>    label_mode<span class="op">=</span><span class="st">'binary'</span></span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>    )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Found 1027 files belonging to 2 classes.
-train_dataset inherits from tf.data.Dataset: True</code></pre>
+Found 256 files belonging to 2 classes.</code></pre>
 </div>
 </div>
-<div id="2f3645ca" class="cell" data-execution_count="10">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Get one batch from the dataset</span></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>sample_batch <span class="op">=</span> <span class="bu">list</span>(train_dataset.take(<span class="dv">1</span>))[<span class="dv">0</span>]</span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Check that the output is a pair</span></span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'sample batch data type: </span><span class="sc">{</span><span class="bu">type</span>(sample_batch)<span class="sc">}</span><span class="ss">'</span>)</span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'number of elements: </span><span class="sc">{</span><span class="bu">len</span>(sample_batch)<span class="sc">}</span><span class="ss">'</span>)</span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract image and label</span></span>
-<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>image_batch <span class="op">=</span> sample_batch[<span class="dv">0</span>]</span>
-<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>label_batch <span class="op">=</span> sample_batch[<span class="dv">1</span>]</span>
-<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Check the shapes</span></span>
-<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'image batch shape: </span><span class="sc">{</span>image_batch<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">'</span>)</span>
-<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'label batch shape: </span><span class="sc">{</span>label_batch<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="1ab9a594" class="cell" data-execution_count="10">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Get one batch from the dataset</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>sample_batch <span class="op">=</span> <span class="bu">list</span>(train_dataset.take(<span class="dv">1</span>))[<span class="dv">0</span>]</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Check that the output is a pair</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'sample batch data type: </span><span class="sc">{</span><span class="bu">type</span>(sample_batch)<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'number of elements: </span><span class="sc">{</span><span class="bu">len</span>(sample_batch)<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract image and label</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>image_batch <span class="op">=</span> sample_batch[<span class="dv">0</span>]</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>label_batch <span class="op">=</span> sample_batch[<span class="dv">1</span>]</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Check the shapes</span></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'image batch shape: </span><span class="sc">{</span>image_batch<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'label batch shape: </span><span class="sc">{</span>label_batch<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>sample batch data type: &lt;class 'tuple'&gt;
 number of elements: 2
@@ -440,234 +454,134 @@ label batch shape: (32, 1)</code></pre>
 </div>
 <section id="normalisation" class="level2" data-number="3.1">
 <h2 data-number="3.1" class="anchored" data-anchor-id="normalisation"><span class="header-section-number">3.1</span> Normalisation</h2>
-<div id="3542fa0d" class="cell" data-execution_count="11">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(image_batch[<span class="dv">0</span>].numpy())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[[[ 57.  68.  76.]
-  [ 68.  81.  95.]
-  [ 84. 103. 121.]
-  ...
-  [ 59.  76.  83.]
-  [ 58.  74.  78.]
-  [ 56.  70.  70.]]
-
- [[ 61.  73.  83.]
-  [ 80.  99. 116.]
-  [108. 134. 155.]
-  ...
-  [ 52.  68.  75.]
-  [ 48.  69.  83.]
-  [ 45.  66.  82.]]
-
- [[ 65.  78.  88.]
-  [ 84. 104. 120.]
-  [111. 138. 160.]
-  ...
-  [ 49.  63.  69.]
-  [ 52.  69.  75.]
-  [ 50.  70.  83.]]
-
- ...
-
- [[129. 120. 110.]
-  [131. 124. 114.]
-  [128. 120. 110.]
-  ...
-  [ 45.  42.  41.]
-  [ 43.  41.  40.]
-  [ 43.  41.  40.]]
-
- [[128. 121. 113.]
-  [123. 118. 110.]
-  [109. 104.  98.]
-  ...
-  [ 48.  45.  43.]
-  [ 48.  45.  44.]
-  [ 51.  48.  46.]]
-
- [[ 97.  94.  89.]
-  [ 80.  77.  75.]
-  [ 76.  75.  74.]
-  ...
-  [ 52.  47.  43.]
-  [ 48.  44.  42.]
-  [ 51.  47.  45.]]]</code></pre>
+<div id="1b24a1c7" class="cell" data-execution_count="11">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co">#print(image_batch[0].numpy())</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
+<div id="44ea3065" class="cell" data-execution_count="12">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Check the range of values</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="co">#print(f'max value: {np.max(image_batch[0].numpy())}')</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="co">#print(f'min value: {np.min(image_batch[0].numpy())}')</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="5d522ba0" class="cell" data-execution_count="12">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Check the range of values</span></span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'max value: </span><span class="sc">{</span>np<span class="sc">.</span><span class="bu">max</span>(image_batch[<span class="dv">0</span>].numpy())<span class="sc">}</span><span class="ss">'</span>)</span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'min value: </span><span class="sc">{</span>np<span class="sc">.</span><span class="bu">min</span>(image_batch[<span class="dv">0</span>].numpy())<span class="sc">}</span><span class="ss">'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>max value: 255.0
-min value: 2.0</code></pre>
+<div id="1f456e17" class="cell" data-execution_count="13">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>rescale_layer <span class="op">=</span> tf.keras.layers.Rescaling(scale<span class="op">=</span><span class="fl">1.</span><span class="op">/</span><span class="dv">255</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
+<div id="0cbb22b1" class="cell" data-execution_count="14">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>image_scaled <span class="op">=</span> rescale_layer(image_batch[<span class="dv">0</span>]).numpy()</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="co">#print(image_scaled)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="dc39ebd8" class="cell" data-execution_count="13">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>rescale_layer <span class="op">=</span> tf.keras.layers.Rescaling(scale<span class="op">=</span><span class="fl">1.</span><span class="op">/</span><span class="dv">255</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="6413f2de" class="cell" data-execution_count="15">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co">#print(f'max value: {np.max(image_scaled)}')</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="co">#print(f'min value: {np.min(image_scaled)}')</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="c99a5c6f" class="cell" data-execution_count="14">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>image_scaled <span class="op">=</span> rescale_layer(image_batch[<span class="dv">0</span>]).numpy()</span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(image_scaled)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[[[0.22352943 0.26666668 0.29803923]
-  [0.26666668 0.31764707 0.37254903]
-  [0.32941177 0.4039216  0.47450984]
-  ...
-  [0.23137257 0.29803923 0.3254902 ]
-  [0.227451   0.2901961  0.30588236]
-  [0.21960786 0.27450982 0.27450982]]
-
- [[0.2392157  0.28627452 0.3254902 ]
-  [0.3137255  0.38823533 0.454902  ]
-  [0.42352945 0.5254902  0.60784316]
-  ...
-  [0.20392159 0.26666668 0.29411766]
-  [0.18823531 0.27058825 0.3254902 ]
-  [0.1764706  0.25882354 0.32156864]]
-
- [[0.25490198 0.30588236 0.34509805]
-  [0.32941177 0.40784317 0.47058827]
-  [0.43529415 0.5411765  0.627451  ]
-  ...
-  [0.19215688 0.24705884 0.27058825]
-  [0.20392159 0.27058825 0.29411766]
-  [0.19607845 0.27450982 0.3254902 ]]
-
- ...
-
- [[0.5058824  0.47058827 0.43137258]
-  [0.5137255  0.48627454 0.44705886]
-  [0.5019608  0.47058827 0.43137258]
-  ...
-  [0.1764706  0.16470589 0.16078432]
-  [0.16862746 0.16078432 0.15686275]
-  [0.16862746 0.16078432 0.15686275]]
-
- [[0.5019608  0.47450984 0.4431373 ]
-  [0.48235297 0.46274513 0.43137258]
-  [0.427451   0.40784317 0.38431376]
-  ...
-  [0.18823531 0.1764706  0.16862746]
-  [0.18823531 0.1764706  0.17254902]
-  [0.20000002 0.18823531 0.18039216]]
-
- [[0.3803922  0.36862746 0.34901962]
-  [0.3137255  0.3019608  0.29411766]
-  [0.29803923 0.29411766 0.2901961 ]
-  ...
-  [0.20392159 0.18431373 0.16862746]
-  [0.18823531 0.17254902 0.16470589]
-  [0.20000002 0.18431373 0.1764706 ]]]</code></pre>
+<div id="b2ef6aaf" class="cell" data-execution_count="16">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the rescaling layer</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>rescale_layer <span class="op">=</span> tf.keras.layers.Rescaling(<span class="fl">1.</span><span class="op">/</span><span class="dv">255</span>)</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Rescale both datasets</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>train_dataset_scaled <span class="op">=</span> train_dataset.<span class="bu">map</span>(<span class="kw">lambda</span> image, label: (rescale_layer(image), label))</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>validation_dataset_scaled <span class="op">=</span> validation_dataset.<span class="bu">map</span>(<span class="kw">lambda</span> image, label: (rescale_layer(image), label))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-</div>
-<div id="a4f6aef3" class="cell" data-execution_count="15">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'max value: </span><span class="sc">{</span>np<span class="sc">.</span><span class="bu">max</span>(image_scaled)<span class="sc">}</span><span class="ss">'</span>)</span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'min value: </span><span class="sc">{</span>np<span class="sc">.</span><span class="bu">min</span>(image_scaled)<span class="sc">}</span><span class="ss">'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="50d8e025" class="cell" data-execution_count="17">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Get one batch of data</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>sample_batch <span class="op">=</span>  <span class="bu">list</span>(train_dataset_scaled.take(<span class="dv">1</span>))[<span class="dv">0</span>]</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Get the image</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>image_scaled <span class="op">=</span> sample_batch[<span class="dv">0</span>][<span class="dv">1</span>].numpy()</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Check the range of values for this image</span></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'max value: </span><span class="sc">{</span>np<span class="sc">.</span><span class="bu">max</span>(image_scaled)<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'min value: </span><span class="sc">{</span>np<span class="sc">.</span><span class="bu">min</span>(image_scaled)<span class="sc">}</span><span class="ss">'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>max value: 1.0
-min value: 0.007843137718737125</code></pre>
-</div>
-</div>
-<div id="c5883992" class="cell" data-execution_count="16">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Rescale the image using a lambda function</span></span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>train_dataset_scaled <span class="op">=</span> train_dataset.<span class="bu">map</span>(<span class="kw">lambda</span> image, label: (rescale_layer(image), label))</span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a><span class="co"># # Same result as above but without using a lambda function</span></span>
-<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a><span class="co"># # define a function to rescale the image</span></span>
-<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a><span class="co"># def rescale_image(image, label):</span></span>
-<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a><span class="co">#     return rescale_layer(image), label</span></span>
-<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a><span class="co"># dataset_scaled = dataset.map(rescale_image)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<div id="082acf83" class="cell" data-execution_count="17">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Get one batch of data</span></span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>sample_batch <span class="op">=</span>  <span class="bu">list</span>(train_dataset_scaled.take(<span class="dv">1</span>))[<span class="dv">0</span>]</span>
-<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Get the image</span></span>
-<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>image_scaled <span class="op">=</span> sample_batch[<span class="dv">0</span>][<span class="dv">1</span>].numpy()</span>
-<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Check the range of values for this image</span></span>
-<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'max value: </span><span class="sc">{</span>np<span class="sc">.</span><span class="bu">max</span>(image_scaled)<span class="sc">}</span><span class="ss">'</span>)</span>
-<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'min value: </span><span class="sc">{</span>np<span class="sc">.</span><span class="bu">min</span>(image_scaled)<span class="sc">}</span><span class="ss">'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>max value: 1.0
-min value: 0.007843137718737125</code></pre>
+min value: 0.0</code></pre>
 </div>
 </div>
 </section>
 <section id="optimise-data-pipeline" class="level2" data-number="3.2">
 <h2 data-number="3.2" class="anchored" data-anchor-id="optimise-data-pipeline"><span class="header-section-number">3.2</span> Optimise Data Pipeline</h2>
-<div id="6b9bfc5b" class="cell" data-execution_count="18">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>SHUFFLE_BUFFER_SIZE <span class="op">=</span> <span class="dv">1000</span></span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>PREFETCH_BUFFER_SIZE <span class="op">=</span> tf.data.AUTOTUNE</span>
-<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>train_dataset_final <span class="op">=</span> (train_dataset_scaled</span>
-<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>                       .cache()</span>
-<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>                       .shuffle(SHUFFLE_BUFFER_SIZE)</span>
-<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>                       .prefetch(PREFETCH_BUFFER_SIZE)</span>
-<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>                      )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="6db4b363" class="cell" data-execution_count="18">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>SHUFFLE_BUFFER_SIZE <span class="op">=</span> <span class="dv">1000</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>PREFETCH_BUFFER_SIZE <span class="op">=</span> tf.data.AUTOTUNE</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Configure the training set</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>train_dataset_final <span class="op">=</span> (train_dataset_scaled</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>                       .cache()</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>                       .shuffle(SHUFFLE_BUFFER_SIZE)</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>                       .prefetch(PREFETCH_BUFFER_SIZE)</span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>                      )</span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Configure the validation dataset</span></span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>validation_dataset_final <span class="op">=</span> (validation_dataset_scaled</span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a>                            .cache()</span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a>                            .prefetch(PREFETCH_BUFFER_SIZE)</span>
+<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a>                           )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="6dee45f2" class="cell" data-execution_count="19">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>history <span class="op">=</span> model.fit(train_dataset_final,epochs<span class="op">=</span><span class="dv">15</span>,verbose<span class="op">=</span><span class="dv">2</span>)</span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Sauvegarder le modèle entraîné pour le Demo Interactive </span></span>
-<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>model.save(<span class="st">'horse_human_model.h5'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="7fde9982" class="cell" data-execution_count="19">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>history <span class="op">=</span> model.fit(</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>      train_dataset_final,</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>      epochs<span class="op">=</span><span class="dv">15</span>,</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>      validation_data <span class="op">=</span> validation_dataset_final,</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>      verbose<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Sauvegarder le modèle entraîné pour le Demo Interactive </span></span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>model.save(<span class="st">'horse_human_model.h5'</span>, include_optimizer<span class="op">=</span><span class="va">False</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Epoch 1/15</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>33/33 - 34s - 1s/step - accuracy: 0.5998 - loss: 0.6922
+<pre><code>33/33 - 35s - 1s/step - accuracy: 0.6183 - loss: 0.7318 - val_accuracy: 0.5508 - val_loss: 0.6819
 Epoch 2/15
-33/33 - 32s - 968ms/step - accuracy: 0.8199 - loss: 0.3925
+33/33 - 32s - 964ms/step - accuracy: 0.8578 - loss: 0.3779 - val_accuracy: 0.7969 - val_loss: 1.7393
 Epoch 3/15
-33/33 - 30s - 903ms/step - accuracy: 0.9104 - loss: 0.2797
+33/33 - 31s - 952ms/step - accuracy: 0.9172 - loss: 0.2876 - val_accuracy: 0.8242 - val_loss: 1.4876
 Epoch 4/15
-33/33 - 29s - 892ms/step - accuracy: 0.9338 - loss: 0.1870
+33/33 - 32s - 956ms/step - accuracy: 0.9523 - loss: 0.1133 - val_accuracy: 0.8984 - val_loss: 1.1570
 Epoch 5/15
-33/33 - 30s - 919ms/step - accuracy: 0.9766 - loss: 0.0717
+33/33 - 31s - 953ms/step - accuracy: 0.9464 - loss: 0.5422 - val_accuracy: 0.7266 - val_loss: 1.1784
 Epoch 6/15
-33/33 - 30s - 897ms/step - accuracy: 0.9815 - loss: 0.0784
+33/33 - 31s - 951ms/step - accuracy: 0.9961 - loss: 0.0231 - val_accuracy: 0.8164 - val_loss: 1.7225
 Epoch 7/15
-33/33 - 29s - 889ms/step - accuracy: 0.9659 - loss: 0.1249
+33/33 - 32s - 955ms/step - accuracy: 0.9990 - loss: 0.0040 - val_accuracy: 0.8438 - val_loss: 0.9289
 Epoch 8/15
-33/33 - 30s - 912ms/step - accuracy: 1.0000 - loss: 0.0071
+33/33 - 32s - 956ms/step - accuracy: 0.9766 - loss: 0.1519 - val_accuracy: 0.8398 - val_loss: 1.9814
 Epoch 9/15
-33/33 - 32s - 957ms/step - accuracy: 0.9796 - loss: 0.0965
+33/33 - 32s - 979ms/step - accuracy: 1.0000 - loss: 0.0016 - val_accuracy: 0.8359 - val_loss: 2.1284
 Epoch 10/15
-33/33 - 31s - 932ms/step - accuracy: 0.9757 - loss: 0.1762
+33/33 - 31s - 948ms/step - accuracy: 0.9737 - loss: 0.1382 - val_accuracy: 0.6992 - val_loss: 3.4776
 Epoch 11/15
-33/33 - 32s - 964ms/step - accuracy: 0.9990 - loss: 0.0076
+33/33 - 32s - 959ms/step - accuracy: 0.9990 - loss: 0.0039 - val_accuracy: 0.7930 - val_loss: 3.7660
 Epoch 12/15
-33/33 - 39s - 1s/step - accuracy: 0.9873 - loss: 0.0729
+33/33 - 33s - 1s/step - accuracy: 0.9727 - loss: 0.1507 - val_accuracy: 0.7695 - val_loss: 1.9278
 Epoch 13/15
-33/33 - 33s - 1s/step - accuracy: 1.0000 - loss: 0.0048
+33/33 - 33s - 992ms/step - accuracy: 1.0000 - loss: 0.0013 - val_accuracy: 0.8086 - val_loss: 2.1821
 Epoch 14/15
-33/33 - 32s - 968ms/step - accuracy: 1.0000 - loss: 4.2927e-04
+33/33 - 33s - 999ms/step - accuracy: 1.0000 - loss: 1.1596e-04 - val_accuracy: 0.8125 - val_loss: 2.5983
 Epoch 15/15
-33/33 - 32s - 982ms/step - accuracy: 0.9727 - loss: 0.6480</code></pre>
+33/33 - 33s - 999ms/step - accuracy: 1.0000 - loss: 3.1594e-05 - val_accuracy: 0.8047 - val_loss: 2.9434</code></pre>
 </div>
 </div>
 </section>
 <section id="évolution-de-laccuracy-pendant-lentraînement" class="level2" data-number="3.3">
 <h2 data-number="3.3" class="anchored" data-anchor-id="évolution-de-laccuracy-pendant-lentraînement"><span class="header-section-number">3.3</span> Évolution de l’accuracy pendant l’entraînement</h2>
-<div id="b46bd253" class="cell" data-execution_count="20">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the training accuracy for each epoch</span></span>
-<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>acc <span class="op">=</span> history.history[<span class="st">'accuracy'</span>]</span>
-<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>epochs <span class="op">=</span> <span class="bu">range</span>(<span class="bu">len</span>(acc))</span>
-<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>plt.plot(epochs, acc, <span class="st">'r'</span>, label<span class="op">=</span><span class="st">'Training accuracy'</span>)</span>
-<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Training accuracy'</span>)</span>
-<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>plt.legend(loc<span class="op">=</span><span class="dv">0</span>)</span>
-<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="d25cb224" class="cell" data-execution_count="20">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the training accuracy for each epoch</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>acc <span class="op">=</span> history.history[<span class="st">'accuracy'</span>]</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>val_acc <span class="op">=</span> history.history[<span class="st">'val_accuracy'</span>]</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>loss <span class="op">=</span> history.history[<span class="st">'loss'</span>]</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>val_loss <span class="op">=</span> history.history[<span class="st">'val_loss'</span>]</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>epochs <span class="op">=</span> <span class="bu">range</span>(<span class="bu">len</span>(acc))</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>plt.plot(epochs, acc, <span class="st">'r'</span>, label<span class="op">=</span><span class="st">'Training accuracy'</span>)</span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>plt.plot(epochs, val_acc, <span class="st">'b'</span>, label<span class="op">=</span><span class="st">'Validation accuracy'</span>)</span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Training and validation accuracy'</span>)</span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>plt.legend(loc<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="Part3_files/figure-html/cell-21-output-1.png" width="579" height="432" class="figure-img"></p>
+<p><img src="Part3_files/figure-html/cell-21-output-1.png" width="571" height="432" class="figure-img"></p>
 </figure>
 </div>
 </div>
@@ -675,61 +589,61 @@ Epoch 15/15
 </section>
 <section id="fonctionnement-du-modèle" class="level2" data-number="3.4">
 <h2 data-number="3.4" class="anchored" data-anchor-id="fonctionnement-du-modèle"><span class="header-section-number">3.4</span> Fonctionnement du modèle</h2>
-<div id="9d57e7f1" class="cell" data-execution_count="21">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define a new Model that will take an image as input, and will output</span></span>
-<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="co"># intermediate representations for all layers in the previous model after</span></span>
-<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a><span class="co"># the first.</span></span>
-<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>successive_outputs <span class="op">=</span> [layer.output <span class="cf">for</span> layer <span class="kw">in</span> model.layers[<span class="dv">1</span>:]]</span>
-<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>visualization_model <span class="op">=</span> tf.keras.models.Model(inputs <span class="op">=</span> model.inputs, outputs <span class="op">=</span> successive_outputs)</span>
-<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Prepare a random input image from the training set.</span></span>
-<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>horse_img_files <span class="op">=</span> [os.path.join(train_horse_dir, f) <span class="cf">for</span> f <span class="kw">in</span> train_horse_names]</span>
-<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a>human_img_files <span class="op">=</span> [os.path.join(train_human_dir, f) <span class="cf">for</span> f <span class="kw">in</span> train_human_names]</span>
-<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a>img_path <span class="op">=</span> random.choice(horse_img_files <span class="op">+</span> human_img_files)</span>
-<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a>img <span class="op">=</span> tf.keras.utils.load_img(img_path, target_size<span class="op">=</span>(<span class="dv">300</span>, <span class="dv">300</span>))  <span class="co"># this is a PIL image</span></span>
-<span id="cb33-13"><a href="#cb33-13" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> tf.keras.utils.img_to_array(img)  <span class="co"># Numpy array with shape (300, 300, 3)</span></span>
-<span id="cb33-14"><a href="#cb33-14" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> x.reshape((<span class="dv">1</span>,) <span class="op">+</span> x.shape)  <span class="co"># Numpy array with shape (1, 300, 300, 3)</span></span>
-<span id="cb33-15"><a href="#cb33-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-16"><a href="#cb33-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Scale by 1/255</span></span>
-<span id="cb33-17"><a href="#cb33-17" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> rescale_layer(x)</span>
-<span id="cb33-18"><a href="#cb33-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-19"><a href="#cb33-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Run the image through the network, thus obtaining all</span></span>
-<span id="cb33-20"><a href="#cb33-20" aria-hidden="true" tabindex="-1"></a><span class="co"># intermediate representations for this image.</span></span>
-<span id="cb33-21"><a href="#cb33-21" aria-hidden="true" tabindex="-1"></a>successive_feature_maps <span class="op">=</span> visualization_model.predict(x, verbose<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb33-22"><a href="#cb33-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-23"><a href="#cb33-23" aria-hidden="true" tabindex="-1"></a><span class="co"># These are the names of the layers, so you can have them as part of the plot</span></span>
-<span id="cb33-24"><a href="#cb33-24" aria-hidden="true" tabindex="-1"></a>layer_names <span class="op">=</span> [layer.name <span class="cf">for</span> layer <span class="kw">in</span> model.layers[<span class="dv">1</span>:]]</span>
-<span id="cb33-25"><a href="#cb33-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-26"><a href="#cb33-26" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the representations</span></span>
-<span id="cb33-27"><a href="#cb33-27" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> layer_name, feature_map <span class="kw">in</span> <span class="bu">zip</span>(layer_names, successive_feature_maps):</span>
-<span id="cb33-28"><a href="#cb33-28" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="bu">len</span>(feature_map.shape) <span class="op">==</span> <span class="dv">4</span>:</span>
-<span id="cb33-29"><a href="#cb33-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-30"><a href="#cb33-30" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Just do this for the conv / maxpool layers, not the fully-connected layers</span></span>
-<span id="cb33-31"><a href="#cb33-31" aria-hidden="true" tabindex="-1"></a>        n_features <span class="op">=</span> feature_map.shape[<span class="op">-</span><span class="dv">1</span>]  <span class="co"># number of features in feature map</span></span>
-<span id="cb33-32"><a href="#cb33-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-33"><a href="#cb33-33" aria-hidden="true" tabindex="-1"></a>        <span class="co"># The feature map has shape (1, size, size, n_features)</span></span>
-<span id="cb33-34"><a href="#cb33-34" aria-hidden="true" tabindex="-1"></a>        size <span class="op">=</span> feature_map.shape[<span class="dv">1</span>]</span>
-<span id="cb33-35"><a href="#cb33-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-36"><a href="#cb33-36" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Tile the images in this matrix</span></span>
-<span id="cb33-37"><a href="#cb33-37" aria-hidden="true" tabindex="-1"></a>        display_grid <span class="op">=</span> np.zeros((size, size <span class="op">*</span> n_features))</span>
-<span id="cb33-38"><a href="#cb33-38" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(n_features):</span>
-<span id="cb33-39"><a href="#cb33-39" aria-hidden="true" tabindex="-1"></a>            x <span class="op">=</span> feature_map[<span class="dv">0</span>, :, :, i]</span>
-<span id="cb33-40"><a href="#cb33-40" aria-hidden="true" tabindex="-1"></a>            x <span class="op">-=</span> x.mean()</span>
-<span id="cb33-41"><a href="#cb33-41" aria-hidden="true" tabindex="-1"></a>            x <span class="op">/=</span> x.std()</span>
-<span id="cb33-42"><a href="#cb33-42" aria-hidden="true" tabindex="-1"></a>            x <span class="op">*=</span> <span class="dv">64</span></span>
-<span id="cb33-43"><a href="#cb33-43" aria-hidden="true" tabindex="-1"></a>            x <span class="op">+=</span> <span class="dv">128</span></span>
-<span id="cb33-44"><a href="#cb33-44" aria-hidden="true" tabindex="-1"></a>            x <span class="op">=</span> np.clip(x, <span class="dv">0</span>, <span class="dv">255</span>).astype(<span class="st">'uint8'</span>)</span>
-<span id="cb33-45"><a href="#cb33-45" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-46"><a href="#cb33-46" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Tile each filter into this big horizontal grid</span></span>
-<span id="cb33-47"><a href="#cb33-47" aria-hidden="true" tabindex="-1"></a>            display_grid[:, i <span class="op">*</span> size : (i <span class="op">+</span> <span class="dv">1</span>) <span class="op">*</span> size] <span class="op">=</span> x</span>
-<span id="cb33-48"><a href="#cb33-48" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-49"><a href="#cb33-49" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Display the grid</span></span>
-<span id="cb33-50"><a href="#cb33-50" aria-hidden="true" tabindex="-1"></a>        scale <span class="op">=</span> <span class="fl">20.</span> <span class="op">/</span> n_features</span>
-<span id="cb33-51"><a href="#cb33-51" aria-hidden="true" tabindex="-1"></a>        plt.figure(figsize<span class="op">=</span>(scale <span class="op">*</span> n_features, scale))</span>
-<span id="cb33-52"><a href="#cb33-52" aria-hidden="true" tabindex="-1"></a>        plt.title(layer_name)</span>
-<span id="cb33-53"><a href="#cb33-53" aria-hidden="true" tabindex="-1"></a>        plt.grid(<span class="va">False</span>)</span>
-<span id="cb33-54"><a href="#cb33-54" aria-hidden="true" tabindex="-1"></a>        plt.imshow(display_grid, aspect<span class="op">=</span><span class="st">'auto'</span>, cmap<span class="op">=</span><span class="st">'viridis'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="cd4ec6cc" class="cell" data-execution_count="21">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define a new Model that will take an image as input, and will output</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="co"># intermediate representations for all layers in the previous model after</span></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="co"># the first.</span></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>successive_outputs <span class="op">=</span> [layer.output <span class="cf">for</span> layer <span class="kw">in</span> model.layers[<span class="dv">1</span>:]]</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>visualization_model <span class="op">=</span> tf.keras.models.Model(inputs <span class="op">=</span> model.inputs, outputs <span class="op">=</span> successive_outputs)</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Prepare a random input image from the training set.</span></span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>horse_img_files <span class="op">=</span> [os.path.join(train_horse_dir, f) <span class="cf">for</span> f <span class="kw">in</span> train_horse_names]</span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>human_img_files <span class="op">=</span> [os.path.join(train_human_dir, f) <span class="cf">for</span> f <span class="kw">in</span> train_human_names]</span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>img_path <span class="op">=</span> random.choice(horse_img_files <span class="op">+</span> human_img_files)</span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a>img <span class="op">=</span> tf.keras.utils.load_img(img_path, target_size<span class="op">=</span>(<span class="dv">300</span>, <span class="dv">300</span>))  <span class="co"># this is a PIL image</span></span>
+<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> tf.keras.utils.img_to_array(img)  <span class="co"># Numpy array with shape (300, 300, 3)</span></span>
+<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> x.reshape((<span class="dv">1</span>,) <span class="op">+</span> x.shape)  <span class="co"># Numpy array with shape (1, 300, 300, 3)</span></span>
+<span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-16"><a href="#cb28-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Scale by 1/255</span></span>
+<span id="cb28-17"><a href="#cb28-17" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> rescale_layer(x)</span>
+<span id="cb28-18"><a href="#cb28-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-19"><a href="#cb28-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Run the image through the network, thus obtaining all</span></span>
+<span id="cb28-20"><a href="#cb28-20" aria-hidden="true" tabindex="-1"></a><span class="co"># intermediate representations for this image.</span></span>
+<span id="cb28-21"><a href="#cb28-21" aria-hidden="true" tabindex="-1"></a>successive_feature_maps <span class="op">=</span> visualization_model.predict(x, verbose<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb28-22"><a href="#cb28-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-23"><a href="#cb28-23" aria-hidden="true" tabindex="-1"></a><span class="co"># These are the names of the layers, so you can have them as part of the plot</span></span>
+<span id="cb28-24"><a href="#cb28-24" aria-hidden="true" tabindex="-1"></a>layer_names <span class="op">=</span> [layer.name <span class="cf">for</span> layer <span class="kw">in</span> model.layers[<span class="dv">1</span>:]]</span>
+<span id="cb28-25"><a href="#cb28-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-26"><a href="#cb28-26" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the representations</span></span>
+<span id="cb28-27"><a href="#cb28-27" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> layer_name, feature_map <span class="kw">in</span> <span class="bu">zip</span>(layer_names, successive_feature_maps):</span>
+<span id="cb28-28"><a href="#cb28-28" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="bu">len</span>(feature_map.shape) <span class="op">==</span> <span class="dv">4</span>:</span>
+<span id="cb28-29"><a href="#cb28-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-30"><a href="#cb28-30" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Just do this for the conv / maxpool layers, not the fully-connected layers</span></span>
+<span id="cb28-31"><a href="#cb28-31" aria-hidden="true" tabindex="-1"></a>        n_features <span class="op">=</span> feature_map.shape[<span class="op">-</span><span class="dv">1</span>]  <span class="co"># number of features in feature map</span></span>
+<span id="cb28-32"><a href="#cb28-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-33"><a href="#cb28-33" aria-hidden="true" tabindex="-1"></a>        <span class="co"># The feature map has shape (1, size, size, n_features)</span></span>
+<span id="cb28-34"><a href="#cb28-34" aria-hidden="true" tabindex="-1"></a>        size <span class="op">=</span> feature_map.shape[<span class="dv">1</span>]</span>
+<span id="cb28-35"><a href="#cb28-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-36"><a href="#cb28-36" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Tile the images in this matrix</span></span>
+<span id="cb28-37"><a href="#cb28-37" aria-hidden="true" tabindex="-1"></a>        display_grid <span class="op">=</span> np.zeros((size, size <span class="op">*</span> n_features))</span>
+<span id="cb28-38"><a href="#cb28-38" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(n_features):</span>
+<span id="cb28-39"><a href="#cb28-39" aria-hidden="true" tabindex="-1"></a>            x <span class="op">=</span> feature_map[<span class="dv">0</span>, :, :, i]</span>
+<span id="cb28-40"><a href="#cb28-40" aria-hidden="true" tabindex="-1"></a>            x <span class="op">-=</span> x.mean()</span>
+<span id="cb28-41"><a href="#cb28-41" aria-hidden="true" tabindex="-1"></a>            x <span class="op">/=</span> x.std()</span>
+<span id="cb28-42"><a href="#cb28-42" aria-hidden="true" tabindex="-1"></a>            x <span class="op">*=</span> <span class="dv">64</span></span>
+<span id="cb28-43"><a href="#cb28-43" aria-hidden="true" tabindex="-1"></a>            x <span class="op">+=</span> <span class="dv">128</span></span>
+<span id="cb28-44"><a href="#cb28-44" aria-hidden="true" tabindex="-1"></a>            x <span class="op">=</span> np.clip(x, <span class="dv">0</span>, <span class="dv">255</span>).astype(<span class="st">'uint8'</span>)</span>
+<span id="cb28-45"><a href="#cb28-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-46"><a href="#cb28-46" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Tile each filter into this big horizontal grid</span></span>
+<span id="cb28-47"><a href="#cb28-47" aria-hidden="true" tabindex="-1"></a>            display_grid[:, i <span class="op">*</span> size : (i <span class="op">+</span> <span class="dv">1</span>) <span class="op">*</span> size] <span class="op">=</span> x</span>
+<span id="cb28-48"><a href="#cb28-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-49"><a href="#cb28-49" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Display the grid</span></span>
+<span id="cb28-50"><a href="#cb28-50" aria-hidden="true" tabindex="-1"></a>        scale <span class="op">=</span> <span class="fl">20.</span> <span class="op">/</span> n_features</span>
+<span id="cb28-51"><a href="#cb28-51" aria-hidden="true" tabindex="-1"></a>        plt.figure(figsize<span class="op">=</span>(scale <span class="op">*</span> n_features, scale))</span>
+<span id="cb28-52"><a href="#cb28-52" aria-hidden="true" tabindex="-1"></a>        plt.title(layer_name)</span>
+<span id="cb28-53"><a href="#cb28-53" aria-hidden="true" tabindex="-1"></a>        plt.grid(<span class="va">False</span>)</span>
+<span id="cb28-54"><a href="#cb28-54" aria-hidden="true" tabindex="-1"></a>        plt.imshow(display_grid, aspect<span class="op">=</span><span class="st">'auto'</span>, cmap<span class="op">=</span><span class="st">'viridis'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -794,9 +708,14 @@ Epoch 15/15
 </div>
 </div>
 </div>
-
-
 </section>
+</section>
+<section id="démo-interactive" class="level1" data-number="4">
+<h1 data-number="4"><span class="header-section-number">4</span> Démo interactive</h1>
+<p>Nous pouvons tester le modèle directement dans notre navigateur avec nos propres images :</p>
+<p><a href="horse_human_demo.html" target="_blank">Ouvrir la démo interactive →</a></p>
+
+
 </section>
 
 </main> <!-- /main -->

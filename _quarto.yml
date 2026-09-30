@@ -1,6 +1,9 @@
 project:
   type: website
   output-dir: docs  # pour Github pages
+  resources:
+    - horse_human_demo.html
+    - tfjs_model/
 
 website:
   title: "Projet Machine Learning" 
@@ -15,8 +18,6 @@ website:
         text: Partie 2
       - href: Part3.qmd
         text: Partie 3
-      - href: horse_human_demo.html
-        text: "Démo interactive"
       - href: Part4.qmd
         text: Partie 4 
         

@@ -1,66 +1,426 @@
 <!DOCTYPE html>
+
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<title>Démo : Cheval ou Humain ?</title>
-<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.15.0/dist/tf.min.js"></script>
-<style>
-  body { font-family: sans-serif; text-align: center; padding: 40px; }
-  #preview { max-width: 300px; margin: 20px auto; display: block; }
-  #result { font-size: 1.4em; font-weight: bold; margin-top: 20px; }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Démo : Cheval ou Humain ?</title>
+
+  <!-- TensorFlow.js -->
+
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.15.0/dist/tf.min.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f5f6fa;
+      color: #222;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 30px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 650px;
+      background: white;
+      padding: 35px;
+      border-radius: 16px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+      text-align: center;
+    }
+
+    h1 {
+      margin-top: 0;
+      margin-bottom: 10px;
+    }
+
+    .description {
+      color: #666;
+      margin-bottom: 25px;
+    }
+
+    #upload {
+      display: none;
+    }
+
+    .upload-button {
+      display: inline-block;
+      padding: 12px 22px;
+      background: #222;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .upload-button:hover {
+      opacity: 0.8;
+    }
+
+    #preview {
+      display: none;
+      width: 300px;
+      height: 300px;
+      object-fit: cover;
+      margin: 25px auto;
+      border-radius: 10px;
+      border: 1px solid #ddd;
+    }
+
+    #status {
+      margin-top: 20px;
+      padding: 10px;
+      border-radius: 8px;
+      background: #f0f0f0;
+      color: #555;
+    }
+
+    #result {
+      margin-top: 25px;
+      font-size: 1.6rem;
+      font-weight: bold;
+    }
+
+    #confidence {
+      margin-top: 10px;
+      color: #666;
+      font-size: 1rem;
+    }
+
+    .progress-container {
+      width: 100%;
+      height: 14px;
+      background: #eee;
+      border-radius: 10px;
+      margin-top: 15px;
+      overflow: hidden;
+    }
+
+    #progress {
+      width: 0%;
+      height: 100%;
+      background: #222;
+      transition: width 0.3s ease;
+    }
+
+    .error {
+      color: #b00020;
+      background: #ffecec !important;
+    }
+
+    .success {
+      color: #166534;
+      background: #ecfdf5 !important;
+    }
+
+    .loading {
+      color: #92400e;
+      background: #fffbeb !important;
+    }
+
+    .info {
+      margin-top: 25px;
+      font-size: 0.9rem;
+      color: #777;
+      line-height: 1.5;
+    }
+  </style>
+
 </head>
+
 <body>
 
-<h1>Cheval ou Humain ?</h1>
-<p>Choisissez une image pour tester le modèle directement dans votre navigateur.</p>
+  <div class="container">
 
-<input type="file" id="upload" accept="image/*">
-<img id="preview" style="display:none;">
+<h1>🐴 Cheval ou Humain ?</h1>
+
+<p class="description">
+  Choisissez une image pour tester le modèle directement dans votre navigateur.
+</p>
+
+<!-- Bouton de sélection -->
+<label for="upload" class="upload-button">
+  Choisir une image
+</label>
+
+<input
+  type="file"
+  id="upload"
+  accept="image/*"
+>
+
+<!-- Aperçu -->
+<img
+  id="preview"
+  alt="Image sélectionnée"
+>
+
+<!-- État du modèle -->
+<div id="status" class="loading">
+  Chargement du modèle...
+</div>
+
+<!-- Résultat -->
 <div id="result"></div>
-<div id="status">Chargement du modèle...</div>
 
-<script>
-let model;
+<div id="confidence"></div>
 
-// Charger le modèle au démarrage de la page
-async function loadModel() {
-  model = await tf.loadLayersModel('tfjs_model/model.json');
-  document.getElementById('status').innerText = 'Modèle prêt !';
-}
-loadModel();
+<!-- Barre de confiance -->
+<div class="progress-container">
+  <div id="progress"></div>
+</div>
 
-document.getElementById('upload').addEventListener('change', async (event) => {
-  const file = event.target.files[0];
-  if (!file) return;
+<p class="info">
+  Le modèle a été entraîné avec des images redimensionnées en
+  <strong id="size-info">300 × 300</strong> et normalisées entre 0 et 1.
+</p>
 
-  const img = document.getElementById('preview');
-  img.src = URL.createObjectURL(file);
-  img.style.display = 'block';
+  </div>
 
-  img.onload = async () => {
-    const result = document.getElementById('result');
-    result.innerText = 'Analyse en cours...';
+  <script>
 
-    // Prétraiter l'image : redimensionner à 300x300, normaliser
-    const tensor = tf.browser.fromPixels(img)
-      .resizeNearestNeighbor([300, 300])
-      .toFloat()
-      .div(255.0)
-      .expandDims();
+    // =========================================================
+    // CONFIGURATION
+    // =========================================================
 
-    const prediction = model.predict(tensor);
-    const value = (await prediction.data())[0];
+    const MODEL_PATH = "tfjs_model/model.json";
+    let IMAGE_SIZE = 300; // remplacé par la taille d'entrée réelle du modèle
 
-    result.innerText = value > 0.5
-      ? `Humain (confiance : ${(value*100).toFixed(1)}%)`
-      : `Cheval (confiance : ${((1-value)*100).toFixed(1)}%)`;
+    let model = null;
 
-    tensor.dispose();
-    prediction.dispose();
-  };
-});
-</script>
+
+    // =========================================================
+    // ÉLÉMENTS HTML
+    // =========================================================
+
+    const upload = document.getElementById("upload");
+    const preview = document.getElementById("preview");
+    const result = document.getElementById("result");
+    const confidence = document.getElementById("confidence");
+    const status = document.getElementById("status");
+    const progress = document.getElementById("progress");
+
+
+    // =========================================================
+    // CHARGEMENT DU MODÈLE
+    // =========================================================
+
+    async function loadModel() {
+
+      try {
+
+        status.className = "loading";
+        status.innerText = "Chargement du modèle...";
+
+        // Charger le modèle TensorFlow.js
+        // model = await tf.loadLayersModel(MODEL_PATH);
+        // model = await tf.loadGraphModel(MODEL_PATH);
+        model = await tf.loadLayersModel(MODEL_PATH);
+
+        // Lire la taille d'entrée directement depuis le modèle (évite tout décalage)
+        IMAGE_SIZE = model.inputs[0].shape[1];
+        document.getElementById("size-info").innerText = IMAGE_SIZE + " × " + IMAGE_SIZE;
+        console.log("Modèle chargé avec succès.");
+        console.log("Input shape :", model.inputs[0].shape);
+        console.log("Output shape :", model.outputs[0].shape);
+
+        status.className = "success";
+        status.innerText = "Modèle prêt ! Vous pouvez choisir une image.";
+
+      } catch (error) {
+
+        console.error("Erreur lors du chargement du modèle :", error);
+
+        status.className = "error";
+
+        status.innerText =
+          "Impossible de charger le modèle. Vérifiez le dossier tfjs_model.";
+
+      }
+    }
+
+
+    // =========================================================
+    // PRÉDICTION
+    // =========================================================
+
+    async function predictImage(image) {
+
+      if (!model) {
+
+        result.innerText = "";
+        confidence.innerText =
+          "Le modèle n'est pas encore chargé.";
+
+        return;
+      }
+
+      try {
+
+        status.className = "loading";
+        status.innerText = "Analyse de l'image...";
+
+        result.innerText = "Analyse en cours...";
+        confidence.innerText = "";
+
+        progress.style.width = "0%";
+
+
+        // -----------------------------------------------------
+        // Création du tensor
+        // -----------------------------------------------------
+
+        const tensor = tf.tidy(() => {
+
+          return tf.browser
+            .fromPixels(image, 3)
+            .resizeBilinear([IMAGE_SIZE, IMAGE_SIZE])
+            .toFloat()
+            .div(255.0)
+            .expandDims(0);
+
+        });
+
+
+        // Vérification de la taille
+        console.log("Tensor envoyé au modèle :", tensor.shape);
+
+
+        // -----------------------------------------------------
+        // Prédiction
+        // -----------------------------------------------------
+
+        const prediction = model.predict(tensor);
+
+        const value = (await prediction.data())[0];
+
+
+        // -----------------------------------------------------
+        // Interprétation
+        //
+        // 0 = cheval
+        // 1 = humain
+        // -----------------------------------------------------
+
+        let label;
+        let confidenceValue;
+
+
+        if (value >= 0.5) {
+
+          label = "👤 Humain";
+          confidenceValue = value * 100;
+
+        } else {
+
+          label = "🐴 Cheval";
+          confidenceValue = (1 - value) * 100;
+
+        }
+
+
+        // -----------------------------------------------------
+        // Affichage
+        // -----------------------------------------------------
+
+        result.innerText = label;
+
+        confidence.innerText =
+          `Confiance : ${confidenceValue.toFixed(1)} %`;
+
+        progress.style.width =
+          `${Math.min(confidenceValue, 100)}%`;
+
+
+        status.className = "success";
+        status.innerText = "Analyse terminée.";
+
+
+        // -----------------------------------------------------
+        // Libérer la mémoire TensorFlow.js
+        // -----------------------------------------------------
+
+        tensor.dispose();
+        prediction.dispose();
+
+
+      } catch (error) {
+
+        console.error("Erreur pendant la prédiction :", error);
+
+        status.className = "error";
+
+        status.innerText =
+          "Une erreur est survenue pendant l'analyse.";
+
+        result.innerText = "";
+
+        confidence.innerText =
+          "Impossible d'analyser cette image.";
+
+      }
+    }
+
+
+    // =========================================================
+    // SÉLECTION D'UNE IMAGE
+    // =========================================================
+
+    upload.addEventListener("change", function(event) {
+
+      const file = event.target.files[0];
+
+      if (!file) {
+        return;
+      }
+
+
+      // Vérifier que c'est bien une image
+      if (!file.type.startsWith("image/")) {
+
+        status.className = "error";
+        status.innerText =
+          "Veuillez sélectionner une image.";
+
+        return;
+      }
+
+
+      // Créer une URL temporaire
+      const imageURL = URL.createObjectURL(file);
+
+      // Attendre que l'image soit chargée (onload défini AVANT src)
+      preview.onload = async function() {
+
+        await predictImage(preview);
+
+        // Libérer l'URL temporaire
+        URL.revokeObjectURL(imageURL);
+
+      };
+
+      preview.src = imageURL;
+      preview.style.display = "block";
+
+    });
+
+
+    // =========================================================
+    // INITIALISATION
+    // =========================================================
+
+    loadModel();
+
+  </script>
 
 </body>
 </html>
